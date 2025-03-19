@@ -1,0 +1,216 @@
+<%- include('../layouts/manager.html', {
+    title: 'Duyệt đăng ký ca',
+    styles: '<link rel="stylesheet" href="/css/manager/duyet-dang-ky-ca.css">',
+    scripts: '<script src="/js/manager/duyet-dang-ky-ca.js"></script>',
+    body: `
+    <div class="duyet-ca-container">
+        <!-- Header với tiêu đề và nút thêm -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center">
+                <h4 class="mb-0">Duyệt đăng ký ca</h4>
+            </div>
+            <button id="btn-bulk-approve" class="btn btn-primary" disabled>
+                <i class="fas fa-check-circle me-2"></i>Duyệt đã chọn
+            </button>
+        </div>
+
+        <!-- Bộ lọc -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="week-filter" class="form-label">Tuần</label>
+                            <input type="week" class="form-control" id="week-filter">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="status-filter" class="form-label">Trạng thái</label>
+                            <select class="form-control" id="status-filter">
+                                <option value="all">Tất cả</option>
+                                <option value="pending" selected>Chờ duyệt</option>
+                                <option value="approved">Đã duyệt</option>
+                                <option value="rejected">Đã từ chối</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bảng danh sách đăng ký ca -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="registerShiftTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px"><input type="checkbox" id="select-all"></th>
+                                <th>Nhân viên</th>
+                                <th>Ngày</th>
+                                <th>Ca làm việc</th>
+                                <th>Thời gian</th>
+                                <th>Ghi chú</th>
+                                <th>Trạng thái</th>
+                                <th style="width: 120px">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             <!-- Dữ liệu mẫu -->
+                             <tr>
+                                <td>
+                                    <input type="checkbox" class="shift-checkbox" data-id="1">
+                                </td>
+                                <td>Nguyễn Văn A</td>
+                                <td>Thứ hai, 20/11/2023</td>
+                                <td>Ca sáng</td>
+                                <td>07:00 - 12:00</td>
+                                <td>Đăng ký ca sáng</td>
+                                <td><span class="status-badge status-pending">Chờ duyệt</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-success action-btn approve-btn" 
+                                            data-id="1" 
+                                            data-bs-tooltip="tooltip"
+                                            title="Duyệt">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger action-btn reject-btn"
+                                            data-id="1"
+                                            data-bs-tooltip="tooltip"
+                                            title="Từ chối">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="shift-checkbox" data-id="2">
+                                </td>
+                                <td>Trần Thị B</td>
+                                <td>Thứ ba, 21/11/2023</td>
+                                <td>Ca chiều</td>
+                                <td>12:00 - 17:00</td>
+                                <td>Đăng ký ca chiều</td>
+                                <td><span class="status-badge status-pending">Chờ duyệt</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-success action-btn approve-btn" 
+                                            data-id="2" 
+                                            data-bs-tooltip="tooltip"
+                                            title="Duyệt">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger action-btn reject-btn"
+                                            data-id="2"
+                                            data-bs-tooltip="tooltip"
+                                            title="Từ chối">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="shift-checkbox" data-id="3" disabled>
+                                </td>
+                                <td>Lê Văn C</td>
+                                <td>Thứ tư, 22/11/2023</td>
+                                <td>Ca tối</td>
+                                <td>17:00 - 22:00</td>
+                                <td>Đăng ký ca tối</td>
+                                <td><span class="status-badge status-approved">Đã duyệt</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-secondary action-btn" disabled>
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary action-btn" disabled>
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="shift-checkbox" data-id="4" disabled>
+                                </td>
+                                <td>Phạm Thị D</td>
+                                <td>Thứ năm, 23/11/2023</td>
+                                <td>Ca sáng</td>
+                                <td>07:00 - 12:00</td>
+                                <td>Bận việc gia đình</td>
+                                <td><span class="status-badge status-rejected">Từ chối</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-secondary action-btn" disabled>
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary action-btn" disabled>
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="8" class="text-center">Đang tải dữ liệu...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal xác nhận duyệt -->
+        <div class="modal fade" id="approveModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận duyệt</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Bạn có chắc chắn muốn duyệt ca làm việc này?</p>
+                        <input type="hidden" id="shift-id">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-primary" id="btn-approve-confirm">Xác nhận</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal xác nhận từ chối -->
+        <div class="modal fade" id="rejectModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận từ chối</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Bạn có chắc chắn muốn từ chối ca làm việc này?</p>
+                        <div class="mb-3">
+                            <label for="reject-reason" class="form-label">Lý do từ chối</label>
+                            <textarea class="form-control" id="reject-reason" rows="3"></textarea>
+                        </div>
+                        <input type="hidden" id="reject-shift-id">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-danger" id="btn-reject-confirm">Xác nhận</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast thông báo -->
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header bg-success text-white">
+                    <strong class="me-auto">Thành công</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body">
+                    Duyệt ca làm việc thành công!
+                </div>
+            </div>
+        </div>
+    </div>
+    `
+}) %>

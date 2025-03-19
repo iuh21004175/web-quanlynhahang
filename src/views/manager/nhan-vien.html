@@ -1,0 +1,190 @@
+<%- include('../layouts/manager.html', {
+    title: 'Quản lý nhân viên',
+    styles: '<link rel="stylesheet" href="/css/manager/nhan-vien.css">',
+    scripts: '<script src="/js/manager/nhan-vien.js"></script>',
+    body: `
+    <div class="staff-container">
+        <!-- Header với tiêu đề, bộ lọc và nút thêm -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center">
+                <h4 class="mb-0 me-4">Nhân viên</h4>
+                <select class="form-select filter-select" id="positionFilter">
+                    <option value="all">Tất cả chức vụ</option>
+                    <option value="phucvu">Phục vụ</option>
+                    <option value="daubep">Đầu bếp</option>
+                    <option value="thungan">Thu ngân</option>
+                </select>
+            </div>
+            <button class="btn btn-success add-btn" data-bs-toggle="modal" data-bs-target="#addStaffModal">
+                <i class="fas fa-plus me-2"></i>Thêm nhân viên
+            </button>
+        </div>
+
+        <!-- Bảng danh sách nhân viên -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px">STT</th>
+                                <th style="width: 100px">Ảnh</th>
+                                <th>Họ và tên</th>
+                                <th>Số điện thoại</th>
+                                <th>Chức vụ</th>
+                                <th>Lương cơ bản</th>
+                                <th>Trạng thái</th>
+                                <th style="width: 110px">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>
+                                    <img src="/images/avatars/default.jpg" class="staff-avatar" alt="Avatar">
+                                </td>
+                                <td>Nguyễn Văn A</td>
+                                <td>0123456789</td>
+                                <td>Phục vụ</td>
+                                <td>4,500,000 đ</td>
+                                <td><span class="badge bg-success">Đang làm việc</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editStaffModal"
+                                            data-bs-tooltip="tooltip"
+                                            title="Chỉnh sửa"
+                                            data-id="1"
+                                            data-name="Nguyễn Văn A"
+                                            data-phone="0123456789"
+                                            data-position="Phục vụ">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal thêm nhân viên -->
+        <div class="modal fade" id="addStaffModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Thêm nhân viên mới</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form id="addStaffForm">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Họ và tên</label>
+                                <input type="text" class="form-control" name="staffName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" name="phone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Chức vụ</label>
+                                <select class="form-select" name="position" required>
+                                    <option value="">Chọn chức vụ</option>
+                                    <option value="phucvu">Phục vụ</option>
+                                    <option value="daubep">Đầu bếp</option>
+                                    <option value="thungan">Thu ngân</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Ảnh đại diện</label>
+                                <input type="file" class="form-control" name="avatar" accept="image/*">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Lương cơ bản</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="salary" required min="0" step="500000">
+                                    <span class="input-group-text">VNĐ</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Trạng thái làm việc</label>
+                                <select class="form-select" name="status" required>
+                                    <option value="active">Đang làm việc</option>
+                                    <option value="inactive">Nghỉ việc</option>
+                                    <option value="suspended">Tạm nghỉ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-success">Thêm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal chỉnh sửa nhân viên -->
+        <div class="modal fade" id="editStaffModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chỉnh sửa thông tin nhân viên</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form id="editStaffForm">
+                        <div class="modal-body">
+                            <input type="hidden" name="staffId" id="editStaffId">
+                            <div class="mb-3">
+                                <label class="form-label">Họ và tên</label>
+                                <input type="text" class="form-control" name="staffName" id="editStaffName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" name="phone" id="editStaffPhone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Chức vụ</label>
+                                <select class="form-select" name="position" id="editStaffPosition" required>
+                                    <option value="">Chọn chức vụ</option>
+                                    <option value="phucvu">Phục vụ</option>
+                                    <option value="daubep">Đầu bếp</option>
+                                    <option value="thungan">Thu ngân</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Ảnh đại diện mới</label>
+                                <input type="file" class="form-control" name="avatar" accept="image/*">
+                                <small class="form-text text-muted">Để trống nếu không muốn thay đổi ảnh</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Ảnh hiện tại</label>
+                                <img id="currentStaffImage" src="" alt="Current staff image" class="img-thumbnail d-block" style="max-width: 200px;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Lương cơ bản</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="salary" id="editStaffSalary" required min="0" step="500000">
+                                    <span class="input-group-text">VNĐ</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Trạng thái làm việc</label>
+                                <select class="form-select" name="status" id="editStaffStatus" required>
+                                    <option value="active">Đang làm việc</option>
+                                    <option value="inactive">Nghỉ việc</option>
+                                    <option value="suspended">Tạm nghỉ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    `
+}) %>

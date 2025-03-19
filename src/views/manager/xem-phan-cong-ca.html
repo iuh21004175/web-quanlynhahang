@@ -1,0 +1,181 @@
+<%- include('../layouts/manager.html', {
+    title: 'Xem phân công ca',
+    styles: '<link rel="stylesheet" href="/css/manager/xem-phan-cong-ca.css">',
+    scripts: `
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <script src="/js/manager/xem-phan-cong-ca.js"></script>`,
+    body: `
+    <div class="xem-phan-cong-container">
+        <!-- Header với tiêu đề -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center">
+                <h4 class="mb-0">Xem phân công ca làm việc</h4>
+            </div>
+            <div>
+                <button id="btn-export" class="btn btn-outline-primary">
+                    <i class="fas fa-file-export me-2"></i>Xuất Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Bộ lọc -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="week-filter" class="form-label">Tuần</label>
+                            <input type="week" class="form-control" id="week-filter">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="department-filter" class="form-label">Bộ phận</label>
+                            <select class="form-control" id="department-filter">
+                                <option value="all">Tất cả</option>
+                                <option value="waiter">Phục vụ</option>
+                                <option value="kitchen">Bếp</option>
+                                <option value="cashier">Thu ngân</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bảng thống kê tổng quát -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Thống kê ca làm việc</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="assignmentSummaryTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nhân viên</th>
+                                <th>Bộ phận</th>
+                                <th>Tổng ca</th>
+                                <th>Ca sáng</th>
+                                <th>Ca chiều</th>
+                                <th>Ca tối</th>
+                                <th style="width: 100px">Chi tiết</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dữ liệu mẫu -->
+                            <tr>
+                                <td>Nguyễn Văn A</td>
+                                <td>Phục vụ</td>
+                                <td>5</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td>2</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info view-details-btn" data-id="1" data-bs-toggle="modal" data-bs-target="#detailsModal">
+                                        <i class="fas fa-eye"></i> Chi tiết
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Trần Thị B</td>
+                                <td>Bếp</td>
+                                <td>6</td>
+                                <td>3</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info view-details-btn" data-id="2" data-bs-toggle="modal" data-bs-target="#detailsModal">
+                                        <i class="fas fa-eye"></i> Chi tiết
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Lê Văn C</td>
+                                <td>Thu ngân</td>
+                                <td>4</td>
+                                <td>1</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info view-details-btn" data-id="3" data-bs-toggle="modal" data-bs-target="#detailsModal">
+                                        <i class="fas fa-eye"></i> Chi tiết
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Phạm Thị D</td>
+                                <td>Phục vụ</td>
+                                <td>5</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td>2</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info view-details-btn" data-id="4" data-bs-toggle="modal" data-bs-target="#detailsModal">
+                                        <i class="fas fa-eye"></i> Chi tiết
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biểu đồ thống kê -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Phân bổ ca theo bộ phận</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="departmentChart" style="height: 350px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Phân bổ theo loại ca</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="shiftTypeChart" style="height: 350px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal xem chi tiết ca làm việc -->
+        <div class="modal fade" id="detailsModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chi tiết ca làm việc - <span id="employee-name">Nguyễn Văn A</span></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="assignmentDetailsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Ngày</th>
+                                        <th>Ca làm việc</th>
+                                        <th>Thời gian</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Chi tiết ca sẽ được thêm bằng JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    `
+}) %>

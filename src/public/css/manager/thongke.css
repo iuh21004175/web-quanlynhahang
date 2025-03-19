@@ -1,0 +1,68 @@
+/* Container cho trang thống kê */
+.thongke-container {
+    background-color: transparent;
+    padding: 0;
+}
+
+/* Card thống kê */
+.stats-card {
+    transition: transform 0.2s;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Card chung */
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding: 15px 20px;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Bộ lọc */
+#filterForm {
+    padding: 15px;
+}
+
+/* Bảng thống kê */
+.table-responsive {
+    padding: 15px;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 600;
+    color: #555;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+/* Biểu đồ */
+.chart-container {
+    padding: 15px;
+    height: 100%;
+}
+
+/* Nút */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #723a0f;
+    border-color: #723a0f;
+} 

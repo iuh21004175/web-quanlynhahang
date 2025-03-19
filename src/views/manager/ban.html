@@ -1,0 +1,224 @@
+<%- include('../layouts/manager.html', {
+    title: 'Quản lý bàn ăn',
+    styles: '<link rel="stylesheet" href="/css/manager/ban.css">',
+    scripts: '<script src="/js/manager/ban.js"></script>',
+    body: `
+    <div class="table-management">
+        <!-- Sidebar khu vực -->
+        <div class="area-sidebar">
+            <div class="area-header">
+                <h5 class="mb-0">Khu vực</h5>
+                <div class="area-search mb-3">
+                    <input type="text" class="form-control" placeholder="Tìm khu vực..." id="searchArea">
+                </div>
+            </div>
+            <div class="area-list">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action active" data-area-id="all">
+                        <i class="fas fa-border-all me-2"></i>Tất cả
+                        <span class="badge bg-secondary rounded-pill ms-2">20</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action" data-area-id="1">
+                        <i class="fas fa-map-marker-alt me-2"></i>Tầng 1
+                        <span class="badge bg-secondary rounded-pill ms-2">8</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action" data-area-id="2">
+                        <i class="fas fa-map-marker-alt me-2"></i>Tầng 2
+                        <span class="badge bg-secondary rounded-pill ms-2">6</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action" data-area-id="3">
+                        <i class="fas fa-map-marker-alt me-2"></i>Sân vườn
+                        <span class="badge bg-secondary rounded-pill ms-2">6</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nội dung chính -->
+        <div class="content-wrapper">
+            <!-- Header -->
+            <div class="content-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Quản lý bàn ăn</h4>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addTableModal">
+                        <i class="fas fa-plus me-2"></i>Thêm bàn
+                    </button>
+                </div>
+                <div class="table-filters mt-3">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <select class="form-select" id="statusFilter">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="empty">Trống</option>
+                                <option value="occupied">Đang sử dụng</option>
+                                <option value="reserved">Đã đặt trước</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="capacityFilter">
+                                <option value="all">Tất cả sức chứa</option>
+                                <option value="2">2 người</option>
+                                <option value="4">4 người</option>
+                                <option value="6">6 người</option>
+                                <option value="8">8 người</option>
+                                <option value="10">10 người</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thêm legend trạng thái -->
+            <div class="status-legend mt-3">
+                <div class="legend-item">
+                    <span class="legend-color bg-success"></span>
+                    <span class="legend-text">Trống</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color bg-danger"></span>
+                    <span class="legend-text">Đang sử dụng</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color bg-warning"></span>
+                    <span class="legend-text">Đã đặt trước</span>
+                </div>
+            </div>
+
+            <!-- Danh sách bàn -->
+            <div class="table-grid mt-4">
+                <div class="table-card">
+                    <div class="table-status empty"></div>
+                    <div class="table-info">
+                        <h5 class="table-name">Bàn 01</h5>
+                        <p class="mb-1"><i class="fas fa-users me-2"></i><span class="table-capacity">4 người</span></p>
+                        <p class="mb-1"><i class="fas fa-map-marker-alt me-2"></i><span class="table-area">Tầng 1</span></p>
+                        <span class="badge bg-success">Trống</span>
+                    </div>
+                    <div class="table-actions">
+                        <button class="btn btn-sm btn-primary edit-table-btn" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#editTableModal" 
+                                data-bs-tooltip="tooltip" 
+                                title="Chỉnh sửa">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Thêm các card bàn khác tương tự -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal thêm bàn mới -->
+    <div class="modal fade" id="addTableModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm bàn mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="addTableForm">
+                    <div class="modal-body">
+                        <input type="hidden" name="status" value="empty">
+                        
+                        <!-- Tên bàn -->
+                        <div class="mb-3">
+                            <label class="form-label">Tên bàn <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="tableName" required>
+                        </div>
+
+                        <!-- Khu vực -->
+                        <div class="mb-3">
+                            <label class="form-label">Khu vực <span class="text-danger">*</span></label>
+                            <select class="form-select" name="areaId" required>
+                                <option value="">Chọn khu vực</option>
+                                <option value="1">Tầng 1</option>
+                                <option value="2">Tầng 2</option>
+                                <option value="3">Sân vườn</option>
+                            </select>
+                        </div>
+
+                        <!-- Sức chứa -->
+                        <div class="mb-3">
+                            <label class="form-label">Sức chứa <span class="text-danger">*</span></label>
+                            <select class="form-select" name="capacity" required>
+                                <option value="2">2 người</option>
+                                <option value="4">4 người</option>
+                                <option value="6">6 người</option>
+                                <option value="8">8 người</option>
+                                <option value="10">10 người</option>
+                            </select>
+                        </div>
+
+                        <!-- Ghi chú -->
+                        <div class="mb-3">
+                            <label class="form-label">Ghi chú</label>
+                            <textarea class="form-control" name="note" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-success">Thêm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal chỉnh sửa bàn -->
+    <div class="modal fade" id="editTableModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chỉnh sửa bàn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editTableForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="editTableId" name="tableId">
+                        
+                        <!-- Tên bàn -->
+                        <div class="mb-3">
+                            <label class="form-label">Tên bàn <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editTableName" name="tableName" required>
+                        </div>
+
+                        <!-- Khu vực -->
+                        <div class="mb-3">
+                            <label class="form-label">Khu vực <span class="text-danger">*</span></label>
+                            <select class="form-select" id="editAreaId" name="areaId" required>
+                                <option value="">Chọn khu vực</option>
+                                <option value="1">Tầng 1</option>
+                                <option value="2">Tầng 2</option>
+                                <option value="3">Sân vườn</option>
+                            </select>
+                        </div>
+
+                        <!-- Sức chứa -->
+                        <div class="mb-3">
+                            <label class="form-label">Sức chứa <span class="text-danger">*</span></label>
+                            <select class="form-select" id="editCapacity" name="capacity" required>
+                                <option value="2">2 người</option>
+                                <option value="4">4 người</option>
+                                <option value="6">6 người</option>
+                                <option value="8">8 người</option>
+                                <option value="10">10 người</option>
+                            </select>
+                        </div>
+
+                        <!-- Ghi chú -->
+                        <div class="mb-3">
+                            <label class="form-label">Ghi chú</label>
+                            <textarea class="form-control" id="editNote" name="note" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    `
+}) %>

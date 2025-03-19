@@ -1,0 +1,46 @@
+<header class="main-header">
+    <div class="header-container w-100 d-flex justify-content-between align-items-center">
+        <!-- Phần bên trái với tiêu đề -->
+        <div class="header-left">
+            <button class="btn btn-link sidebar-toggle d-md-none me-3">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="page-title">
+                <h4 class="mb-0"><%= typeof pageTitle != 'undefined' ? pageTitle : 'Quản Lý Nhà Hàng' %></h4>
+            </div>
+        </div>
+
+        <!-- Phần bên phải -->
+        <div class="header-right">
+            <div class="dropdown me-3">
+                <button class="btn btn-light position-relative" data-bs-toggle="dropdown">
+                    <i class="fas fa-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        3
+                    </span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><h6 class="dropdown-header">Thông báo mới</h6></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-utensils me-2"></i>Đơn hàng mới #123</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-exclamation-circle me-2"></i>Nguyên liệu sắp hết</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-primary" href="/manager/notifications">Xem tất cả</a></li>
+                </ul>
+            </div>
+
+            <div class="dropdown">
+                <button class="btn btn-light d-flex align-items-center" data-bs-toggle="dropdown">
+                    <img src="/images/avatar.png" class="rounded-circle me-2" width="32" height="32" alt="User">
+                    <span class="d-none d-md-block">Admin</span>
+                    <i class="fas fa-chevron-down ms-2"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="/manager/profile"><i class="fas fa-user me-2"></i>Hồ sơ</a></li>
+                    <li><a class="dropdown-item" href="/manager/settings"><i class="fas fa-cog me-2"></i>Cài đặt</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header> 

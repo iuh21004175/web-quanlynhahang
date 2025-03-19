@@ -1,0 +1,67 @@
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1rem;
+}
+
+.table th {
+    background-color: #f8f9fa;
+}
+
+.modal-xl {
+    max-width: 1200px;
+}
+
+.ingredient-row td {
+    vertical-align: middle;
+}
+
+.form-control:read-only {
+    background-color: #e9ecef;
+}
+
+#searchForm .form-label.small {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+
+#searchForm .form-label.fw-bold {
+    margin-bottom: 0.5rem;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+}
+
+.remove-row {
+    padding: 0.25rem 0.5rem;
+}
+
+@media print {
+    .modal-footer,
+    .btn-close {
+        display: none;
+    }
+    
+    .modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin: 0;
+        padding: 0;
+        overflow: visible!important;
+    }
+}
+
+/* Thêm style cho input readonly */
+.form-control[readonly] {
+    background-color: #e9ecef !important;
+    cursor: not-allowed;
+} 

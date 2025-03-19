@@ -1,0 +1,197 @@
+<%- include('../layouts/manager.html', {
+    title: 'Quản lý nguyên liệu',
+    styles: '<link rel="stylesheet" href="/css/manager/nguyen-lieu.css">',
+    scripts: '<script src="/js/manager/nguyen-lieu.js"></script>',
+    body: `
+    <div class="ingredient-container">
+        <!-- Header với tiêu đề, bộ lọc và nút thêm -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <h4 class="mb-0">Nguyên liệu</h4>
+                <div class="d-flex gap-2">
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="searchInput" 
+                        placeholder="Tìm kiếm nguyên liệu..."
+                        style="width: 250px;">
+                    <select class="form-select" style="width: 200px;" id="categoryFilter">
+                        <option value="all">Tất cả danh mục</option>
+                        <option value="1">Gia vị</option>
+                        <option value="2">Thịt</option>
+                        <option value="3">Rau củ</option>
+                        <option value="4">Hải sản</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addIngredientModal">
+                <i class="fas fa-plus me-2"></i>Thêm nguyên liệu
+            </button>
+        </div>
+
+        <!-- Bảng danh sách nguyên liệu -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px">STT</th>
+                                <th style="width: 100px">Hình ảnh</th>
+                                <th>Tên nguyên liệu</th>
+                                <th>Danh mục</th>
+                                <th>Đơn vị tính</th>
+                                <th>Tồn kho</th>
+                                <th>Trạng thái</th>
+                                <th style="width: 120px">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>
+                                    <img src="/images/ingredients/default.jpg" class="ingredient-image" alt="Nguyên liệu">
+                                </td>
+                                <td>Bột ngọt</td>
+                                <td>Gia vị</td>
+                                <td>kg</td>
+                                <td>10</td>
+                                <td><span class="badge bg-success">Còn hàng</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editIngredientModal"
+                                            data-bs-tooltip="tooltip"
+                                            title="Chỉnh sửa">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>
+                                    <img src="/images/ingredients/default.jpg" class="ingredient-image" alt="Nguyên liệu">
+                                </td>
+                                <td>Thịt heo</td>
+                                <td>Thịt</td>
+                                <td>kg</td>
+                                <td>2</td>
+                                <td><span class="badge bg-warning text-dark">Sắp hết</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editIngredientModal"
+                                            data-bs-tooltip="tooltip"
+                                            title="Chỉnh sửa">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal thêm nguyên liệu -->
+        <div class="modal fade" id="addIngredientModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Thêm nguyên liệu mới</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form id="addIngredientForm">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Tên nguyên liệu</label>
+                                <input type="text" class="form-control" name="ingredientName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Danh mục</label>
+                                <select class="form-select" name="categoryId" required>
+                                    <option value="">Chọn danh mục</option>
+                                    <option value="1">Gia vị</option>
+                                    <option value="2">Thịt</option>
+                                    <option value="3">Rau củ</option>
+                                    <option value="4">Hải sản</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Đơn vị tính</label>
+                                <select class="form-select" name="unit" required>
+                                    <option value="kg">Kilogram (kg)</option>
+                                    <option value="g">Gram (g)</option>
+                                    <option value="l">Lít (l)</option>
+                                    <option value="ml">Mililít (ml)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Hình ảnh</label>
+                                <input type="file" class="form-control" name="image" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-success">Thêm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal chỉnh sửa nguyên liệu -->
+        <div class="modal fade" id="editIngredientModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chỉnh sửa nguyên liệu</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form id="editIngredientForm">
+                        <div class="modal-body">
+                            <input type="hidden" name="ingredientId" id="editIngredientId">
+                            <div class="mb-3">
+                                <label class="form-label">Tên nguyên liệu</label>
+                                <input type="text" class="form-control" name="ingredientName" id="editIngredientName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Danh mục</label>
+                                <select class="form-select" name="categoryId" id="editIngredientCategory" required>
+                                    <option value="">Chọn danh mục</option>
+                                    <option value="1">Gia vị</option>
+                                    <option value="2">Thịt</option>
+                                    <option value="3">Rau củ</option>
+                                    <option value="4">Hải sản</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Đơn vị tính</label>
+                                <select class="form-select" name="unit" id="editIngredientUnit" required>
+                                    <option value="kg">Kilogram (kg)</option>
+                                    <option value="g">Gram (g)</option>
+                                    <option value="l">Lít (l)</option>
+                                    <option value="ml">Mililít (ml)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Hình ảnh mới</label>
+                                <input type="file" class="form-control" name="image" accept="image/*">
+                                <small class="form-text text-muted">Để trống nếu không muốn thay đổi hình ảnh</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Hình ảnh hiện tại</label>
+                                <img id="currentIngredientImage" src="" alt="Current ingredient image" class="img-thumbnail d-block" style="max-width: 200px;">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    `
+}) %>

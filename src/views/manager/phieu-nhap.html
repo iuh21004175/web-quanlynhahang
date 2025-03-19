@@ -1,0 +1,308 @@
+<%- include('../layouts/manager.html', {
+    title: 'Quản lý phiếu nhập kho',
+    styles: '<link rel="stylesheet" href="/css/manager/phieu-nhap.css">',
+    scripts: '<script src="/js/manager/phieu-nhap.js"></script>',
+    body: `
+    <div class="receipt-container">
+        <!-- Header với tiêu đề và bộ lọc -->
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">Phiếu nhập kho</h4>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addReceiptModal">
+                    <i class="fas fa-plus me-2"></i>Tạo phiếu nhập
+                </button>
+            </div>
+
+            <!-- Form tìm kiếm -->
+            <div class="card">
+                <div class="card-body">
+                    <form id="searchForm" class="row g-3">
+                        <!-- Khoảng thời gian -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Thời gian nhập</label>
+                            <div class="d-flex gap-2">
+                                <div class="flex-grow-1">
+                                    <label class="form-label small">Từ ngày</label>
+                                    <input type="date" class="form-control" id="startDate">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <label class="form-label small">Đến ngày</label>
+                                    <input type="date" class="form-control" id="endDate">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Các tiêu chí khác -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Tiêu chí khác</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-label small">&nbsp;</label>
+                                    <input type="text" class="form-control" id="searchSupplier" placeholder="Tên nhà cung cấp">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small">&nbsp;</label>
+                                    <input type="text" class="form-control" id="searchReceiptCode" placeholder="Mã phiếu nhập">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Khoảng giá -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Tổng tiền</label>
+                            <div class="d-flex gap-2">
+                                <div class="flex-grow-1">
+                                    <label class="form-label small">Từ</label>
+                                    <input type="number" class="form-control" id="minAmount" placeholder="Giá thấp nhất">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <label class="form-label small">Đến</label>
+                                    <input type="number" class="form-control" id="maxAmount" placeholder="Giá cao nhất">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nút tìm kiếm và reset -->
+                        <div class="col-md-6 d-flex align-items-end">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search me-2"></i>Tìm kiếm
+                                </button>
+                                <button type="reset" class="btn btn-secondary">
+                                    <i class="fas fa-undo me-2"></i>Đặt lại
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bảng danh sách phiếu nhập -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px">STT</th>
+                                <th style="width: 120px">Mã phiếu</th>
+                                <th>Người nhập</th>
+                                <th>Ngày nhập</th>
+                                <th>Nhà cung cấp</th>
+                                <th>Tổng tiền</th>
+                                <th style="width: 100px">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>PN001</td>
+                                <td>Nguyễn Văn A</td>
+                                <td>20/03/2024</td>
+                                <td>Công ty TNHH ABC</td>
+                                <td>2,500,000đ</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info text-white" 
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#viewReceiptModal"
+                                            data-bs-tooltip="tooltip"
+                                            title="Xem chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal xem chi tiết phiếu nhập -->
+        <div class="modal fade" id="viewReceiptModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chi tiết phiếu nhập kho</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Thông tin phiếu nhập -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <p><strong>Mã phiếu:</strong> <span id="receiptCode">PN001</span></p>
+                                <p><strong>Người nhập:</strong> <span id="receiptStaff">Nguyễn Văn A</span></p>
+                                <p><strong>Ngày nhập:</strong> <span id="receiptDate">20/03/2024</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Nhà cung cấp:</strong> <span id="supplier">Công ty TNHH ABC</span></p>
+                                <p><strong>Số điện thoại:</strong> <span id="supplierPhone">0123456789</span></p>
+                                <p><strong>Địa chỉ:</strong> <span id="supplierAddress">123 ABC, Q.1, TP.HCM</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Bảng chi tiết nguyên liệu -->
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tên nguyên liệu</th>
+                                    <th>Đơn vị</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody id="receiptDetails">
+                                <tr>
+                                    <td>1</td>
+                                    <td>Thịt heo</td>
+                                    <td>kg</td>
+                                    <td>10</td>
+                                    <td>150,000đ</td>
+                                    <td>1,500,000đ</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5" class="text-end"><strong>Tổng tiền:</strong></td>
+                                    <td><strong id="totalAmount">2,500,000đ</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="button" class="btn btn-primary" id="printReceipt">
+                            <i class="fas fa-print me-2"></i>In phiếu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thêm modal tạo phiếu nhập -->
+        <div class="modal fade" id="addReceiptModal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tạo phiếu nhập kho</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form id="addReceiptForm">
+                        <div class="modal-body">
+                            <!-- Thông tin phiếu nhập -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Ngày nhập kho</label>
+                                        <input type="datetime-local" class="form-control" name="receiptDate" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Nhà cung cấp</label>
+                                        <input type="text" class="form-control" name="supplier" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Ghi chú</label>
+                                        <textarea class="form-control" name="note" rows="4"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Danh sách nguyên liệu -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="mb-0">Danh sách nguyên liệu</h6>
+                                    <button type="button" class="btn btn-sm btn-primary" id="addIngredientRow">
+                                        <i class="fas fa-plus me-2"></i>Thêm nguyên liệu
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="ingredientTable">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 50px">STT</th>
+                                                <th>Nguyên liệu</th>
+                                                <th style="width: 100px">Đơn vị</th>
+                                                <th style="width: 100px">Số lượng</th>
+                                                <th style="width: 150px">Đơn giá</th>
+                                                <th style="width: 150px">Thành tiền</th>
+                                                <th style="width: 150px">Hạn sử dụng</th>
+                                                <th>Tình trạng</th>
+                                                <th>Ghi chú</th>
+                                                <th style="width: 50px"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Hàng mẫu -->
+                                            <tr class="ingredient-row">
+                                                <td class="text-center">1</td>
+                                                <td>
+                                                    <select class="form-select ingredient-select" required>
+                                                        <option value="">Chọn nguyên liệu</option>
+                                                        <!-- Options sẽ được load động -->
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex gap-2">
+                                                        <select class="form-select unit-select" required>
+                                                            <option value="">Chọn đơn vị</option>
+                                                            <option value="kg">kg</option>
+                                                            <option value="g">g</option>
+                                                            <option value="l">l</option>
+                                                            <option value="ml">ml</option>
+                                                            <option value="other">Khác</option>
+                                                        </select>
+                                                        <input type="text" class="form-control unit-input" style="display: none;">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control quantity-input" min="0" step="0.1" required>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control price-input" min="0" required>
+                                                </td>
+                                                <td class="amount-cell">0đ</td>
+                                                <td>
+                                                    <input type="date" class="form-control" required>
+                                                </td>
+                                                <td>
+                                                    <select class="form-select" required>
+                                                        <option value="good">Tốt</option>
+                                                        <option value="normal">Bình thường</option>
+                                                        <option value="bad">Kém</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control">
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-danger remove-row">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="5" class="text-end"><strong>Tổng tiền:</strong></td>
+                                                <td colspan="5"><strong id="totalAmount">0đ</strong></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-success">Tạo phiếu nhập</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    `
+}) %> 
