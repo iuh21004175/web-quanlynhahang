@@ -10,7 +10,7 @@
         <div class="welcome-banner mb-4">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h3>Chào mừng, <span id="user-name">Nguyễn Văn A</span>!</h3>
+                    <h3>Xin chào, <span id="user-name">Nguyễn Văn A</span>!</h3>
                     <p class="text-muted">Hôm nay là <span id="current-date"></span></p>
                 </div>
                 <div class="col-lg-4 text-end">
@@ -23,10 +23,10 @@
 
         <!-- Summary Cards -->
         <div class="row mb-4">
-            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-                <div class="card summary-card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
+            <div class="col-lg-6 col-md-6 mb-3 mb-lg-0">
+                <div class="card summary-card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center mb-auto">
                             <div>
                                 <h6 class="card-title text-muted mb-0">Ca làm việc hôm nay</h6>
                                 <h4 class="mt-2 mb-0" id="today-shift">Ca chiều (12:00 - 17:00)</h4>
@@ -35,59 +35,27 @@
                                 <i class="fas fa-calendar-day text-primary"></i>
                             </div>
                         </div>
+                        <div class="mt-3" style="height: 6px;">
+                            <!-- Div trống để giữ khoảng trống giống với card bên cạnh -->
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-                <div class="card summary-card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
+            <div class="col-lg-6 col-md-6 mb-3 mb-lg-0">
+                <div class="card summary-card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center mb-auto">
                             <div>
-                                <h6 class="card-title text-muted mb-0">Giờ làm tháng này</h6>
-                                <h4 class="mt-2 mb-0" id="month-hours">120 / 160 giờ</h4>
+                                <h6 class="card-title text-muted mb-0">Giờ làm tuần này</h6>
+                                <h4 class="mt-2 mb-0" id="week-hours">28 / 40 giờ</h4>
                             </div>
                             <div class="icon-box bg-light-success">
                                 <i class="fas fa-clock text-success"></i>
                             </div>
                         </div>
                         <div class="progress mt-3" style="height: 6px;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-                <div class="card summary-card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title text-muted mb-0">Nhiệm vụ hôm nay</h6>
-                                <h4 class="mt-2 mb-0" id="today-tasks">5 / 8</h4>
-                            </div>
-                            <div class="icon-box bg-light-info">
-                                <i class="fas fa-tasks text-info"></i>
-                            </div>
-                        </div>
-                        <div class="progress mt-3" style="height: 6px;">
-                            <div class="progress-bar bg-info" role="progressbar" style="width: 62%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
-                <div class="card summary-card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title text-muted mb-0">Thông báo mới</h6>
-                                <h4 class="mt-2 mb-0" id="new-notifications">3</h4>
-                            </div>
-                            <div class="icon-box bg-light-danger">
-                                <i class="fas fa-bell text-danger"></i>
-                            </div>
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 70%"></div>
                         </div>
                     </div>
                 </div>
@@ -96,8 +64,7 @@
 
         <!-- Main Content Row -->
         <div class="row">
-            <!-- Left Column -->
-            <div class="col-lg-8">
+            <div class="col-12">
                 <!-- Schedule Card -->
                 <div class="card mb-4">
                     <div class="card-header">
@@ -120,31 +87,31 @@
                                 <tbody id="weekly-schedule">
                                     <!-- Sample data - sẽ được thay thế bằng dữ liệu thực từ API -->
                                     <tr>
-                                        <td>Thứ hai, 20/11/2023</td>
+                                        <td>Thứ hai, 20/03/2025</td>
                                         <td>Ca sáng</td>
                                         <td>07:00 - 12:00</td>
                                         <td><span class="badge bg-success">Hoàn thành</span></td>
                                     </tr>
                                     <tr class="today-row">
-                                        <td>Thứ ba, 21/11/2023</td>
+                                        <td>Thứ ba, 21/03/2025</td>
                                         <td>Ca chiều</td>
                                         <td>12:00 - 17:00</td>
                                         <td><span class="badge bg-primary">Hôm nay</span></td>
                                     </tr>
                                     <tr>
-                                        <td>Thứ tư, 22/11/2023</td>
+                                        <td>Thứ tư, 22/03/2025</td>
                                         <td>Ca tối</td>
                                         <td>17:00 - 22:00</td>
                                         <td><span class="badge bg-warning text-dark">Sắp tới</span></td>
                                     </tr>
                                     <tr>
-                                        <td>Thứ sáu, 24/11/2023</td>
+                                        <td>Thứ sáu, 24/03/2025</td>
                                         <td>Ca sáng</td>
                                         <td>07:00 - 12:00</td>
                                         <td><span class="badge bg-warning text-dark">Sắp tới</span></td>
                                     </tr>
                                     <tr>
-                                        <td>Chủ nhật, 26/11/2023</td>
+                                        <td>Chủ nhật, 26/03/2025</td>
                                         <td>Ca tối</td>
                                         <td>17:00 - 22:00</td>
                                         <td><span class="badge bg-warning text-dark">Sắp tới</span></td>
@@ -159,11 +126,10 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Thống kê hiệu suất</h5>
+                            <h5 class="mb-0">Thống kê giờ làm việc</h5>
                             <div class="chart-period-selector">
                                 <button class="btn btn-sm btn-outline-secondary active" data-period="week">Tuần</button>
                                 <button class="btn btn-sm btn-outline-secondary" data-period="month">Tháng</button>
-                                <button class="btn btn-sm btn-outline-secondary" data-period="quarter">Quý</button>
                             </div>
                         </div>
                     </div>
@@ -171,170 +137,30 @@
                         <div id="performance-chart"></div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Right Column -->
-            <div class="col-lg-4">
-                <!-- Notifications -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Thông báo</h5>
-                            <a href="#" class="text-muted small">Xem tất cả</a>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="notification-list">
-                            <div class="notification-item unread">
-                                <div class="icon-box bg-light-primary">
-                                    <i class="fas fa-calendar-plus text-primary"></i>
-                                </div>
-                                <div class="notification-content">
-                                    <p>Lịch làm việc tuần tới đã được cập nhật</p>
-                                    <span class="text-muted small">2 giờ trước</span>
-                                </div>
-                            </div>
-                            <div class="notification-item unread">
-                                <div class="icon-box bg-light-warning">
-                                    <i class="fas fa-utensils text-warning"></i>
-                                </div>
-                                <div class="notification-content">
-                                    <p>Thực đơn mới đã được cập nhật</p>
-                                    <span class="text-muted small">Hôm nay, 10:15</span>
-                                </div>
-                            </div>
-                            <div class="notification-item unread">
-                                <div class="icon-box bg-light-info">
-                                    <i class="fas fa-clipboard-list text-info"></i>
-                                </div>
-                                <div class="notification-content">
-                                    <p>Bạn có nhiệm vụ mới từ quản lý</p>
-                                    <span class="text-muted small">Hôm qua, 15:30</span>
-                                </div>
-                            </div>
-                            <div class="notification-item">
-                                <div class="icon-box bg-light-success">
-                                    <i class="fas fa-check-circle text-success"></i>
-                                </div>
-                                <div class="notification-content">
-                                    <p>Yêu cầu nghỉ phép của bạn đã được phê duyệt</p>
-                                    <span class="text-muted small">20/11/2023, 09:45</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 
-                <!-- Quick Actions -->
-                <div class="card mb-4">
+                <!-- Staff Information -->
+                <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Truy cập nhanh</h5>
+                        <h5 class="mb-0">Thông tin cá nhân</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-6 mb-3">
-                                <a href="/manager/dang-ky-ca" class="quick-action-item">
-                                    <div class="icon-box bg-light-primary mb-2">
-                                        <i class="fas fa-calendar-plus text-primary"></i>
-                                    </div>
-                                    <h6>Đăng ký ca</h6>
-                                </a>
+                            <div class="col-md-4">
+                                <p><strong>Mã nhân viên:</strong> <span id="staff-id">NV001</span></p>
+                                <p><strong>Họ và tên:</strong> <span id="staff-name">Nguyễn Văn A</span></p>
+                                <p><strong>Chức vụ:</strong> <span id="staff-position">Nhân viên phục vụ</span></p>
                             </div>
-                            <div class="col-6 mb-3">
-                                <a href="/manager/xem-phan-cong-ca" class="quick-action-item">
-                                    <div class="icon-box bg-light-info mb-2">
-                                        <i class="fas fa-calendar-week text-info"></i>
-                                    </div>
-                                    <h6>Lịch làm việc</h6>
-                                </a>
+                            <div class="col-md-4">
+                                <p><strong>Ngày vào làm:</strong> <span id="join-date">01/01/2023</span></p>
+                                <p><strong>Số điện thoại:</strong> <span id="staff-phone">0123456789</span></p>
+                                <p><strong>Email:</strong> <span id="staff-email">nguyenvana@example.com</span></p>
                             </div>
-                            <div class="col-6 mb-3">
-                                <a href="/manager/yeu-cau-nghi-phep" class="quick-action-item">
-                                    <div class="icon-box bg-light-warning mb-2">
-                                        <i class="fas fa-envelope text-warning"></i>
-                                    </div>
-                                    <h6>Xin nghỉ phép</h6>
-                                </a>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <a href="/manager/cham-cong" class="quick-action-item">
-                                    <div class="icon-box bg-light-success mb-2">
-                                        <i class="fas fa-clock text-success"></i>
-                                    </div>
-                                    <h6>Chấm công</h6>
-                                </a>
+                            <div class="col-md-4">
+                                <p><strong>Giờ làm lũy kế:</strong> <span id="total-hours">850 giờ</span></p>
+                                <p><strong>Nghỉ phép còn lại:</strong> <span id="remaining-days">10 ngày</span></p>
+                                <p><strong>Quản lý trực tiếp:</strong> <span id="manager">Trần Văn B</span></p>
                             </div>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Today's Tasks -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Nhiệm vụ hôm nay</h5>
-                            <a href="#" class="text-muted small">Xem tất cả</a>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <ul class="task-list">
-                            <li>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="task1" checked>
-                                    <label class="form-check-label completed" for="task1">Kiểm tra kho nguyên liệu</label>
-                                </div>
-                                <span class="badge bg-info">08:00</span>
-                            </li>
-                            <li>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="task2" checked>
-                                    <label class="form-check-label completed" for="task2">Chuẩn bị khu vực phục vụ</label>
-                                </div>
-                                <span class="badge bg-info">09:30</span>
-                            </li>
-                            <li>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="task3" checked>
-                                    <label class="form-check-label completed" for="task3">Họp nhân viên đầu ca</label>
-                                </div>
-                                <span class="badge bg-info">10:00</span>
-                            </li>
-                            <li>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="task4" checked>
-                                    <label class="form-check-label completed" for="task4">Chuẩn bị thực đơn đặc biệt</label>
-                                </div>
-                                <span class="badge bg-info">11:15</span>
-                            </li>
-                            <li>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="task5" checked>
-                                    <label class="form-check-label completed" for="task5">Kiểm tra đặt bàn buổi trưa</label>
-                                </div>
-                                <span class="badge bg-info">11:30</span>
-                            </li>
-                            <li>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="task6">
-                                    <label class="form-check-label" for="task6">Họp đánh giá buổi trưa</label>
-                                </div>
-                                <span class="badge bg-info">15:00</span>
-                            </li>
-                            <li>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="task7">
-                                    <label class="form-check-label" for="task7">Kiểm tra tồn kho cuối ngày</label>
-                                </div>
-                                <span class="badge bg-info">16:30</span>
-                            </li>
-                            <li>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="task8">
-                                    <label class="form-check-label" for="task8">Lập báo cáo ca làm việc</label>
-                                </div>
-                                <span class="badge bg-info">16:45</span>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>

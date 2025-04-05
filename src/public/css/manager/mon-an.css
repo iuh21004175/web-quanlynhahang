@@ -62,3 +62,17 @@ textarea.form-control {
     resize: vertical;
     min-height: 100px;
 } 
+
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    #viewFoodImage {
+        margin-bottom: 1rem;
+        max-height: 120px;
+    }
+    
+    #viewFoodName {
+        font-size: 1.4rem;
+        margin-bottom: 0.5rem;
+    }
+}

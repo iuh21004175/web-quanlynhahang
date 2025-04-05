@@ -178,11 +178,6 @@
     font-size: 0.875rem;
 }
 
-/* Style cho header container */
-.d-flex.justify-content-between {
-    margin-bottom: 1.5rem;
-}
-
 /* Style cho tiêu đề */
 h4 {
     font-size: 1.25rem;
@@ -211,4 +206,8 @@ h4 {
 .add-btn i {
     font-size: 0.875rem;
     margin-right: 0.5rem;
-} 
+}
+.message-error{
+    font-size: 10px;
+    margin-left: 10px;
+}
