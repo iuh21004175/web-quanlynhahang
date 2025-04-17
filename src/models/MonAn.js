@@ -41,4 +41,6 @@ const MonAn = sequelize.define('MonAn', {
 MonAn.belongsTo(DanhMucMonAn, { foreignKey: 'idDanhMuc' });
 DanhMucMonAn.hasMany(MonAn, { foreignKey: 'idDanhMuc' });
 
+
+
 module.exports = MonAn;

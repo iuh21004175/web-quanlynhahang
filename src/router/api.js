@@ -6,6 +6,8 @@ const CtrlNhanVien = require('../controllers/CtrlNhanVien');
 const CtrlThucDon = require('../controllers/CtrlThucDon');
 const CtrlKho = require('../controllers/CtrlKho');
 const CtrlKhachHang = require('../controllers/CtrlKhachHang');
+const CtrlDonHang = require('../controllers/CtrlDonHang');
+
 
 // Cấu hình lưu file vào bộ nhớ (RAM)
 const upload = multer({ storage: multer.memoryStorage() });
@@ -20,6 +22,8 @@ router.get('/danh-muc-mon-an', CtrlThucDon.layDanhMucMonAn);
 router.post('/danh-muc-mon-an', CtrlThucDon.themDanhMucMonAn);
 router.put('/danh-muc-mon-an', CtrlThucDon.suaDanhMucMonAn);
 router.get('/mon-an', CtrlThucDon.layMonAn);
+router.get('/mon-an/ban-chay', CtrlThucDon.layMonAnBanChay);
+router.get('/mon-an/:id', CtrlThucDon.layMonAnTheoLoai);
 router.post('/mon-an', upload.single('hinhAnh'), CtrlThucDon.themMonAn);
 router.put('/mon-an', upload.single('hinhAnh'), CtrlThucDon.suaMonAn);
 router.get('/chi-tiet-mon-an', CtrlThucDon.layChiTietMonAn);
@@ -36,4 +40,8 @@ router.post('/dang-ky', CtrlKhachHang.dangKy);
 router.post('/dang-nhap-khach-hang', CtrlKhachHang.dangNhap);
 router.post('/kiem-tra-so-dien-thoai', CtrlKhachHang.kiemTraSoDienThoai);
 router.post('/kiem-tra-ten-dang-nhap', CtrlKhachHang.kiemTraTenDangNhap);
+router.get('/lay-thong-tin-khach-hang', CtrlKhachHang.kiemTraTruyCap, CtrlKhachHang.layThongTinKhachHang);
+router.get('/lay-don-hang', CtrlKhachHang.kiemTraTruyCap, CtrlDonHang.layDonHang);
+router.put('/huy-don-hang/:id', CtrlDonHang.huyDonHang);
+
 module.exports = router;
