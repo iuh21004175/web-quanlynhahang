@@ -39,7 +39,7 @@ router.get('/cham-cong', CtrlChamCong.index);
 router.get('/duyet-dang-ky-ca', CtrlXepLich.indexDuyetCa);
 router.get('/xem-phan-cong-ca', CtrlXepLich.indexXemPhanCong);
 router.get('/trang-chu', CtrlTrangChu.index);
-router.get('/don-hang', CtrlDonHang.indexDauBep);
+router.get('/don-hang', CtrlDonHang.index);
 router.get('/dang-xuat', CtrlTaiKhoan.dangXuat);
 router.get('/ho-tro-truc-tuyen', CtrlHoTroTrucTuyen.index);
 module.exports = router;

@@ -1,4 +1,3 @@
-const DonHang = require('../models/DonHang');
 module.exports = {
     index: (req, res) => {
         res.render('customer/trang-chu');
