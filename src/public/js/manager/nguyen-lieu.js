@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     let listDanhMucNguyenLieu = await getAPIDanhMucNguyenLieu();
     let listNguyenLieu = await getAPINguyenLieu();
     let listNhaCungCap = await getAPINhaCungCap();
-    thaoTacVoiCompoboxFilter(listDanhMucNguyenLieu);
+    thaoTacVoiCompoboxFilter(listDanhMucNguyenLieu, listNguyenLieu);
     thaoTacVoiBang(listNguyenLieu);
     if (listDanhMucNguyenLieu.length > 0) {
         const comboboxThemDanhMuc = document.getElementById('ingredientCategory')
@@ -139,15 +139,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         }
     });
-    // Xử lý filter danh mục
-    const categoryFilter = document.getElementById('categoryFilter');
-    if (categoryFilter) {
-        categoryFilter.addEventListener('change', function() {
-            const category = this.value;
-            window.location.href = `/manager/nguyen-lieu${category !== 'all' ? '?category=' + category : ''}`;
-        });
-    }
-
     // Preview ảnh khi chọn file
     const imageInputs = document.querySelectorAll('input[type="file"]');
     imageInputs.forEach(input => {
@@ -169,15 +160,18 @@ document.addEventListener('DOMContentLoaded', async function() {
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('input', function() {
-            const searchText = this.value.toLowerCase().trim();
+            const searchText = removeAccents(this.value.toLowerCase().trim());
             const rows = document.querySelectorAll('tbody tr');
 
             rows.forEach(row => {
-                const ingredientName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-                if (ingredientName.includes(searchText)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
+                const nameCell = row.querySelector('td:nth-child(3)');
+                if (nameCell) {
+                    const ingredientName = removeAccents(nameCell.textContent.toLowerCase());
+                    if (ingredientName.includes(searchText)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
                 }
             });
         });
@@ -258,8 +252,8 @@ function thaoTacVoiBang(list){
                 <td>${item.donVi}</td>
                 <td>${item.tonKho}</td>
                 <td>
-                    <span class="badge ${item.trangThai === 1 ? 'bg-success' : item.trangThai === 0 ? 'bg-danger' : 'bg-warning'}">
-                        ${item.trangThai === 1 ? 'Còn hàng' : item.trangThai === 0 ? 'Hết hàng' : 'Săp hết'}
+                    <span class="badge ${parseInt(item.tonKho) > parseInt(item.toiThieu) ? 'bg-success' : item.tonKho == 0 ? 'bg-danger' : 'bg-warning'}">
+                        ${parseInt(item.tonKho) > parseInt(item.toiThieu) ? 'Còn hàng' : item.tonKho == 0 ? 'Hết hàng' : 'Săp hết'}
                     </span>
                 </td>
                 <td>
@@ -320,17 +314,31 @@ function thaoTacVoiBang(list){
         })
     }
 }
+function removeAccents(str) {
+    return str.normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+}
 // Hàm thao tác với combobox filter
-function thaoTacVoiCompoboxFilter(list){
+function thaoTacVoiCompoboxFilter(listDanhMuc, listNguyenLieu){
     const categoryFilter = document.getElementById('categoryFilter');
-    if(list.length > 0){
-        list.forEach(item => {
+    if(listDanhMuc.length > 0){
+        listDanhMuc.forEach(item => {
             const option = document.createElement('option');
             option.value = item.id;
             option.textContent = item.tenDanhMuc;
             categoryFilter.appendChild(option);
         });
     }
+    // Xử lý filter danh mục
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', function() {
+            const category = this.value;
+            const list = listNguyenLieu.filter(item => item.idDanhMuc == category || category == 'all');
+            thaoTacVoiBang(list); 
+        });
+    }
+
 }
 // Các hàm validation
 function kiemTraTen(input) {

@@ -9,6 +9,7 @@
 
 /* Chat Button */
 .chat-button {
+    position: relative;
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -22,7 +23,30 @@
     cursor: pointer;
     transition: all 0.3s ease;
 }
+.unread-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff4d4d;
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    border: 2px solid #fff;
+    transition: all 0.3s;
+    opacity: 0;
+    transform: scale(0);
+}
 
+.unread-badge.show {
+    opacity: 1;
+    transform: scale(1);
+}
 .chat-button:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
@@ -32,6 +56,7 @@
     animation: pulse 2s infinite;
 }
 
+/* Animation hiệu ứng khi có tin nhắn mới */
 @keyframes pulse {
     0% {
         transform: scale(1);
@@ -42,6 +67,15 @@
     100% {
         transform: scale(1);
     }
+}
+
+.chat-button.new-message {
+    animation: pulse 1s infinite;
+}
+
+.chat-button.new-message .unread-badge {
+    opacity: 1;
+    transform: scale(1);
 }
 
 /* Chat Container */
@@ -208,4 +242,83 @@
         height: 50px;
         font-size: 20px;
     }
+}
+/* Style cho phần yêu cầu đăng nhập */
+.chat-login-required {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: #f8f9fa;
+    border-radius: 0 0 15px 15px;
+}
+
+.chat-login-required i.fa-lock-alt {
+    color: #6c757d;
+    margin-bottom: 15px;
+}
+
+.login-benefits {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    margin: 5px 10px;
+    font-size: 0.85em;
+    color: #495057;
+}
+
+.benefit-item i {
+    margin-right: 6px;
+    color: #0d6efd;
+    font-size: 0.9em;
+}
+
+/* Animation cho icon khóa */
+@keyframes pulse-lock {
+    0% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+}
+
+.chat-login-required i.fa-lock-alt {
+    animation: pulse-lock 2s infinite;
+}
+
+/* Buttons styling */
+.chat-login-required .btn {
+    border-radius: 25px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.chat-login-required .btn-primary {
+    box-shadow: 0 2px 5px rgba(13, 110, 253, 0.3);
+}
+
+.chat-login-required .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.4);
+}
+
+.chat-login-required .btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+    border-color: #0d6efd;
 }

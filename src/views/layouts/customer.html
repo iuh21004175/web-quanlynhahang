@@ -47,29 +47,68 @@
     <div class="chat-widget">
         <div class="chat-button" id="chatButton">
             <i class="fas fa-comments"></i>
+            <span class="unread-badge" id="unreadBadge">0</span>
         </div>
         <div class="chat-container" id="chatContainer">
             <div class="chat-header">
                 <h5>Hỗ Trợ Trực Tuyến</h5>
+                <input type="hidden" id="userId" value="<%= locals.user ? locals.user.id : '' %>">
                 <button class="chat-close" id="chatClose">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="chat-body" id="chatBody">
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message admin">
-                        <div class="message-content">
-                            Xin chào! Chúng tôi có thể giúp gì cho bạn?
+                <% if (locals.user){%>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message admin">
+                            <div class="message-content">
+                                Xin chào! Chúng tôi có thể giúp gì cho bạn?
+                            </div>
+                            <div class="message-time">Bây giờ</div>
                         </div>
-                        <div class="message-time">Bây giờ</div>
                     </div>
-                </div>
-                <div class="chat-input-area">
-                    <input type="text" id="chatInput" placeholder="Nhập tin nhắn của bạn...">
-                    <button id="chatSend">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" placeholder="Nhập tin nhắn của bạn...">
+                        <button id="chatSend">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                <%} else{%>
+                    <div class="chat-login-required">
+                        <div class="text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-lock-alt fa-3x text-muted"></i>
+                            </div>
+                            <h6 class="mb-3">Vui lòng đăng nhập để trò chuyện</h6>
+                            <p class="text-muted small mb-4">Đăng nhập để được hỗ trợ trực tiếp từ nhân viên của chúng tôi</p>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                    <i class="fas fa-sign-in-alt me-2"></i> Đăng nhập
+                                </button>
+                                <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                                    <i class="fas fa-user-plus me-2"></i> Đăng ký tài khoản
+                                </button>
+                            </div>
+                            <div class="mt-4">
+                                <div class="login-benefits">
+                                    <div class="benefit-item">
+                                        <i class="fas fa-headset"></i>
+                                        <span>Hỗ trợ 24/7</span>
+                                    </div>
+                                    <div class="benefit-item">
+                                        <i class="fas fa-history"></i>
+                                        <span>Lịch sử chat</span>
+                                    </div>
+                                    <div class="benefit-item">
+                                        <i class="fas fa-percent"></i>
+                                        <span>Ưu đãi độc quyền</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                <%}%>
+                
             </div>
         </div>
     </div>
@@ -282,9 +321,11 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Main JS -->
-    <script src="/js/customer/main.js"></script>
+    <script src="/js/customer/main.js"></script>>
+    <!--Socket.io-->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <!-- Chat JS -->
-    <script src="/js/customer/chat.js"></script>
+    <script type="module" src="/js/customer/chat.js"></script>
     <!-- Custom JS cho từng trang -->
     <%- typeof scripts != 'undefined' ? scripts : '' %>
 </body>

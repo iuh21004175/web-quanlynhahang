@@ -197,3 +197,41 @@
         flex-direction: column;
     }
 }
+
+/* Giao diện khi hội thoại đang được phục vụ bởi nhân viên khác */
+.conversation-item.being-served {
+    position: relative;
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.conversation-item.being-served:hover {
+    background-color: #fff;
+}
+
+.conversation-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(200, 200, 200, 0.1);
+    cursor: not-allowed;
+    z-index: 10;
+    opacity: 0;
+}
+.conversation-overlay.show {
+    opacity: 1;
+}
+.conversation-status {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    opacity: 0;
+}
+.conversation-status.show{
+    opacity: 1;
+}
+
+.conversation-status i {
+    margin-right: 3px;
+}

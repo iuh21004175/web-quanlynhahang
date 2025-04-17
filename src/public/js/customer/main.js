@@ -54,7 +54,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 else{
                     showErrorToast(); // Hiển thị thông báo lỗi
                     // Đăng nhập thất bại
-                    console.log(data.error); // In ra lỗi để kiểm tra
+                    console.error(data.error); // In ra lỗi để kiểm tra
+                    alert(data.error); // Hiển thị thông báo lỗi
                 }
                     
             } catch (error) {

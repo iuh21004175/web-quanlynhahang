@@ -1,8 +1,15 @@
 const DanhMucNguyenLieu = require('../models/DanhMucNguyenLieu');
 const NhaCungCap = require('../models/NhaCungCap');
 const NguyenLieu = require('../models/NguyenLieu');
+const PhieuNhap = require('../models/PhieuNhap');
+const ChiTietPhieuNhap = require('../models/ChiTietPhieuNhap');
+const Kho = require('../models/Kho');
+const PhieuXuat = require('../models/PhieuXuat');
+const ChiTietPhieuXuat = require('../models/ChiTietPhieuXuat');
 const cloudinary = require('../config/cloudinary');
 const { Readable } = require('stream');
+const { Op } = require("sequelize");
+const NhanVien = require('../models/NhanVien');
 module.exports = {
     indexDanhMuc: (req, res) => {
         res.render('manager/danh-muc-nguyen-lieu');
@@ -271,6 +278,285 @@ module.exports = {
                 return res.json({ status: false, error: 'Không tìm thấy nguyên liệu' });
             }
         }catch(error){
+            console.error('Error:', error);
+            return res.json({ status: false, error: 'Lỗi server', error });
+        }
+    },
+    layPhieuNhap: async (req, res) => {
+        const { startDate, endDate } = req.query;
+        try {
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0); // Set start time to 00:00:00
+
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999); // Set end time to 23:59:59
+            const phieuNhap = await PhieuNhap.findAll({
+                where: {
+                    thoiGianNhap: {
+                        [Op.between]: [start, end]
+                    }
+                }
+            });
+            
+            return res.json({ status: true, list: phieuNhap });
+        }
+        catch (error) {
+            console.error('Error:', error);
+            return res.json({ status: false, error: 'Lỗi server', error });
+        }
+    },
+    themPhieuNhap: async (req, res) => {
+        const { chiTiet, thoiGianNhap, tongTien } = req.body;
+        try{
+            const phieuNhap = await PhieuNhap.create({
+                thoiGianNhap,
+                tongTien
+            })
+            if(phieuNhap){
+                chiTiet.forEach(async (item) => {
+                    ChiTietPhieuNhap.create({
+                        idPhieu: phieuNhap.id,
+                        idNguyenLieu: item.idNguyenLieu,
+                        soLuong: item.soLuong,
+                        gia: item.gia,
+                        hanSuDung: item.hanSuDung,
+                        ghiChu: item.ghiChu
+                    })
+                    Kho.create({
+                        idPhieu: phieuNhap.id,
+                        idNguyenLieu: item.idNguyenLieu,
+                        soLuong: item.soLuong,
+                        gia: item.gia,
+                        hanSuDung: item.hanSuDung,
+                        ghiChu: item.ghiChu
+                    })
+                    const nguyenLieu = await NguyenLieu.findByPk(item.idNguyenLieu);
+                    if(nguyenLieu){
+                        nguyenLieu.tonKho += item.soLuong;
+                        await nguyenLieu.save();
+                    }
+
+                });
+
+                return res.json({status: true, obj: phieuNhap});
+            }
+            else{
+                return res.json({ status: false, error: 'Không tìm thấy phiếu nhập' });
+            }
+            
+        }
+        catch(error){
+            console.error('Error:', error);
+            return res.json({ status: false, error: 'Lỗi server', error });
+        }
+    },
+    layNguyenLieuPhieuNhap: async (req, res) => {
+        const { id } = req.query;
+        try{
+            const nguyenLieu = await ChiTietPhieuNhap.findAll({
+                where: { idPhieu: id },
+                include: [
+                    {
+                        model: NguyenLieu,
+                        attributes: ['ten', 'donVi']
+                    }
+                ]
+            })
+            return res.json({status: true, list: nguyenLieu});
+        }
+        catch(error){
+            console.error('Error:', error);
+            return res.json({ status: false, error: 'Lỗi server', error });
+        }
+    },
+    layNguyenLieuPhieuXuat: async (req, res) => {
+        const { id } = req.query;
+        try{
+            const nguyenLieu = await ChiTietPhieuXuat.findAll({
+                where: { idPhieuXuat: id },
+                include: [
+                    {
+                        model: ChiTietPhieuNhap,
+                        attributes: ['idPhieu', 'idNguyenLieu', 'gia'],
+                        include: [
+                            {
+                                model: NguyenLieu,
+                                attributes: ['ten', 'donVi']
+                            }
+                        ]
+                    }
+                ]
+            })
+            return res.json({status: true, list: nguyenLieu});
+        }
+        catch(error){
+            console.error('Error:', error);
+            return res.json({ status: false, error: 'Lỗi server', error });
+        }
+    },
+    layNguyenLieuKho: async (req, res) => {
+        try {
+            const nguyenLieu = await Kho.findAll({
+                include: [
+                    {
+                        model: NguyenLieu,
+                        attributes: ['ten', 'donVi', 'idDanhMuc'],
+                        include: [{
+                            model: DanhMucNguyenLieu,
+                            attributes: ['tenDanhMuc']
+                        }]
+                    }
+                ]
+            })
+            return res.json({status: true, list: nguyenLieu});
+        }
+        catch(error){
+            console.error('Error:', error);
+            return res.json({ status: false, error: 'Lỗi server', error });
+        }
+    },
+    timKiemPhieuNhap: async (req, res) => {
+        const { startDate, endDate, minAmount, maxAmount } = req.query;
+        try {
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0); // Set start time to 00:00:00
+
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999); // Set end time to 23:59:59
+
+            const whereClause = {
+                thoiGianNhap: {
+                    [Op.between]: [start, end]
+                }
+            };
+
+            if (minAmount) {
+            whereClause.tongTien = { ...whereClause.tongTien, [Op.gte]: minAmount };
+            }
+            if (maxAmount) {
+            whereClause.tongTien = { ...whereClause.tongTien, [Op.lte]: maxAmount };
+            }
+
+            const phieuNhap = await PhieuNhap.findAll({
+                where: whereClause
+            });
+
+            return res.json({ status: true, list: phieuNhap });
+        } catch (error) {
+            console.error('Error:', error);
+            return res.json({ status: false, error: 'Lỗi server', error });
+        }
+    },
+    timKiemPhieuXuat: async (req, res) => {
+        const { startDate, endDate, minAmount, maxAmount } = req.query;
+        try {
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0); // Set start time to 00:00:00
+
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999); // Set end time to 23:59:59
+
+            const whereClause = {
+                thoiGianXuat: {
+                    [Op.between]: [start, end]
+                }
+            };
+
+            if (minAmount) {
+                whereClause.tongTien = { ...whereClause.tongTien, [Op.gte]: minAmount };
+            }
+            if (maxAmount) {
+                whereClause.tongTien = { ...whereClause.tongTien, [Op.lte]: maxAmount };
+            }
+
+            const phieuXuat = await PhieuXuat.findAll({
+                where: whereClause
+            });
+
+            return res.json({ status: true, list: phieuXuat });
+        } catch (error) {
+            console.error('Error:', error);
+            return res.json({ status: false, error: 'Lỗi server', error });
+        }
+    },
+    layPhieuXuat: async (req, res) => {
+        const { startDate, endDate } = req.query;
+        try {
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0); // Set start time to 00:00:00
+
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999); // Set end time to 23:59:59
+            const phieuXuat = await PhieuXuat.findAll({
+                where: {
+                    thoiGianXuat: {
+                        [Op.between]: [start, end]
+                    }
+                },
+                include: [
+                    {
+                        model: NhanVien,
+                        attributes: ['ten'],
+                        required: false // Allow null values for idNhanVien
+                    }
+                ]
+            });
+            
+            return res.json({ status: true, list: phieuXuat });
+        }
+        catch (error) {
+            console.error('Error:', error);
+            return res.json({ status: false, error: 'Lỗi server', error });
+        }
+    },
+    themPhieuXuat: async (req, res) => {
+        const { thoiGianXuat, tongTien, idNguoiNhan, lyDoXuat, chiTiet } = req.body;
+        try{
+            const phieuXuat = await PhieuXuat.create({
+                thoiGianXuat,
+                tongTien,
+                idNhanVien: idNguoiNhan,
+                lyDo: lyDoXuat
+            })
+            if(phieuXuat){
+                chiTiet.forEach(async (item) => {
+                    ChiTietPhieuXuat.create({
+                        idPhieuNhap: item.idPhieuNhap,
+                        idPhieuXuat: phieuXuat.id,
+                        idNguyenLieu: item.idNguyenLieu,
+                        soLuong: item.soLuong,
+                        ghiChu: item.ghiChu
+                    })
+                    const kho = await Kho.findOne({
+                        where: { idPhieu: item.idPhieuNhap, idNguyenLieu: item.idNguyenLieu }
+                    })
+                    if(kho && kho.soLuong > item.soLuong){
+                        kho.soLuong -= item.soLuong;
+                        await kho.save();
+                        
+                    }
+                    else if(kho && kho.soLuong == item.soLuong){
+                        kho.destroy();
+                    }
+                    const nguyenLieu = await NguyenLieu.findByPk(item.idNguyenLieu);
+                    if(nguyenLieu){
+                        nguyenLieu.tonKho -= item.soLuong;
+                        await nguyenLieu.save();
+                    }
+                });
+                phieuXuat = phieuXuat.toJSON();
+                const nhanVien = await NhanVien.findOne({
+                    where: { id: phieuXuat.idNhanVien },
+                    attributes: ['ten']
+                });
+                phieuXuat.NhanVien = nhanVien.toJSON();
+                return res.json({status: true, obj: phieuXuat});
+            }
+            else{
+                return res.json({ status: false, error: 'Không tìm thấy phiếu xuất' });
+            }
+        }
+        catch(error){
             console.error('Error:', error);
             return res.json({ status: false, error: 'Lỗi server', error });
         }

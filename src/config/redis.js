@@ -1,17 +1,35 @@
 const Redis = require("ioredis");
 
-// Tạo kết nối Redis
+// Cấu hình kết nối Redis chính
 const redis = new Redis({ 
-    host: "redis-12744.c1.ap-southeast-1-1.ec2.redns.redis-cloud.com", 
-    port: 12744, 
-    password: "qsR2GDlQQpU84ghtUDKKoW4B23ozoWtO" 
+    host: "localhost", // Địa chỉ Redis server
+    port: 6379, 
+    retryStrategy: (times) => {
+        // Thử kết nối lại sau mỗi 1 giây, tối đa là 3 giây.
+        return Math.min(times * 1000, 3000);
+    },
+    reconnectOnError: (err) => {
+        // Log lỗi khi có sự cố kết nối
+        console.log('Redis error:', err);
+        console.log('Redis connection lost. Attempting to reconnect...');
+        return true; // Trả về true để tự động kết nối lại
+    }
 });
 
-// Tạo Redis Subscriber để lắng nghe tin nhắn từ Redis
-const subscriber = new Redis({ 
-    host: "redis-12744.c1.ap-southeast-1-1.ec2.redns.redis-cloud.com", 
-    port: 12744,
-    password: "qsR2GDlQQpU84ghtUDKKoW4B23ozoWtO"
+// Cấu hình Redis Subscriber để lắng nghe tin nhắn
+const subscriber = new Redis({
+    host: "localhost", // Địa chỉ Redis server
+    port: 6379,
+    retryStrategy: (times) => {
+        // Tương tự như trên, thử kết nối lại với Redis Subscriber
+        return Math.min(times * 1000, 3000);
+    },
+    reconnectOnError: (err) => {
+        // Log lỗi khi Redis Subscriber gặp sự cố kết nối
+        console.log('Redis subscriber error:', err);
+        console.log('Redis subscriber connection lost. Attempting to reconnect...');
+        return true;
+    }
 });
 
 console.log("✅ Redis đã kết nối");

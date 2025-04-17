@@ -1,10 +1,10 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    
     // Khởi tạo tooltips
     const tooltips = document.querySelectorAll('[data-bs-tooltip="tooltip"]');
     tooltips.forEach(tooltip => {
         new bootstrap.Tooltip(tooltip);
     });
-
     // Xử lý tìm kiếm khu vực
     const searchArea = document.getElementById('searchArea');
     searchArea.addEventListener('input', function() {
@@ -77,9 +77,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Xử lý submit form thêm
-    addTableForm.addEventListener('submit', function(e) {
+    addTableForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         // Xử lý thêm bàn
+       
     });
 
     // Xử lý submit form sửa

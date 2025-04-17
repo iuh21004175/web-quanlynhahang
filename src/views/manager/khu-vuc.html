@@ -16,13 +16,11 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover table-danhSach">
                         <thead>
                             <tr>
                                 <th style="width: 80px">STT</th>
                                 <th>Tên khu vực</th>
-                                <th>Mô tả</th>
-                                <th>Trạng thái</th>
                                 <th style="width: 120px">Thao tác</th>
                             </tr>
                         </thead>
@@ -30,10 +28,6 @@
                             <tr>
                                 <td>1</td>
                                 <td>Tầng 1</td>
-                                <td>Khu vực trong nhà, có máy lạnh</td>
-                                <td>
-                                    <span class="badge bg-success">Đang hoạt động</span>
-                                </td>
                                 <td>
                                     <button class="btn btn-sm btn-primary" 
                                             data-bs-toggle="modal"
@@ -41,11 +35,6 @@
                                             data-bs-tooltip="tooltip"
                                             title="Chỉnh sửa">
                                         <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger ms-1"
-                                            data-bs-tooltip="tooltip"
-                                            title="Xóa">
-                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -67,19 +56,9 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label class="form-label">Tên khu vực</label>
-                                <input type="text" class="form-control" name="areaName" required>
+                                <input type="text" class="form-control txt-themKhuVuc" name="areaName" required>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Mô tả</label>
-                                <textarea class="form-control" name="description" rows="3"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Trạng thái</label>
-                                <select class="form-select" name="status" required>
-                                    <option value="active">Đang hoạt động</option>
-                                    <option value="inactive">Ngừng hoạt động</option>
-                                </select>
-                            </div>
+                        
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -103,19 +82,9 @@
                             <input type="hidden" name="areaId">
                             <div class="mb-3">
                                 <label class="form-label">Tên khu vực</label>
-                                <input type="text" class="form-control" name="areaName" required>
+                                <input type="text" class="form-control txt-suaKhuVuc" name="areaName" required>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Mô tả</label>
-                                <textarea class="form-control" name="description" rows="3"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Trạng thái</label>
-                                <select class="form-select" name="status" required>
-                                    <option value="active">Đang hoạt động</option>
-                                    <option value="inactive">Ngừng hoạt động</option>
-                                </select>
-                            </div>
+                            
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -123,6 +92,40 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Thông báo -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToastThem" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span id="toastMessage">Thêm khu vực thành công</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToastSua" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span id="toastMessage">Chỉnh sửa khu vực thành công</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="failToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span id="toastMessage">Lỗi</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>

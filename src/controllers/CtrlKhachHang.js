@@ -1,4 +1,5 @@
 const KhachHang = require('../models/KhachHang');
+const HoiThoai = require('../models/HoiThoai');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
@@ -35,6 +36,33 @@ const CtrlKhachHang = {
             return res.status(500).json({ message: 'Lỗi server' });
         }
     },
+    dangKy: async (req, res) => {
+        const { ten, gioiTinh, ngaySinh, soDienThoai, diaChi, tenDangNhap, matKhau } = req.body;
+        try {
+            // Tạo mới khách hàng
+            const khachHang = await KhachHang.create({
+                ten,
+                gioiTinh,
+                ngaySinh,
+                soDienThoai,
+                diaChi,
+                tenDangNhap,
+                matKhau: crypto.createHash('md5').update(matKhau).digest('hex')
+            });
+            await HoiThoai.create({
+                id: khachHang.id,
+                tieuDe: `${ten}-#${khachHang.id}`,
+            });
+            return res.status(201).json({ status: true});
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ status: false, error: 'Lỗi server', error });
+        }
+    },
+    dangXuat: (req, res) => {
+        res.clearCookie('AuthTokenCustomer');
+        res.redirect('/');
+    },
     kiemTraTruyCap: (req, res, next) => {
         try {
             const token = req.cookies.AuthTokenCustomer;
@@ -62,27 +90,6 @@ const CtrlKhachHang = {
         } catch (error) {
             console.error('Lỗi khi kiểm tra đăng nhập:', error);
             return res.redirect('/')
-        }
-    },
-    dangKy: async (req, res) => {
-        const { ten, gioiTinh, ngaySinh, soDienThoai, diaChi, tenDangNhap, matKhau } = req.body;
-        console.log(req.body);
-        try {
-            // Tạo mới khách hàng
-            const khachHang = await KhachHang.create({
-                ten,
-                gioiTinh,
-                ngaySinh,
-                soDienThoai,
-                diaChi,
-                tenDangNhap,
-                matKhau: crypto.createHash('md5').update(matKhau).digest('hex')
-            });
-            
-            return res.status(201).json({ status: true});
-        } catch (error) {
-            console.error(error);
-            return res.status(500).json({ status: false, error: 'Lỗi server', error });
         }
     },
     kiemTraSoDienThoai: async (req, res) => {

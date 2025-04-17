@@ -1,26 +1,20 @@
 <%- include('../layouts/manager.html', {
     title: 'Hỗ trợ trực tuyến',
     styles: '<link rel="stylesheet" href="/css/manager/ho-tro-truc-tuyen.css">',
-    scripts: '<script src="/js/manager/ho-tro-truc-tuyen.js"></script>',
+    scripts: `
+        <!--Socket.io-->
+        <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+        <script src="/js/manager/ho-tro-truc-tuyen.js"></script>
+    `,
     body: `
     <div class="container-fluid py-3">
+        <input type="hidden" id="tenDangNhap" value="${locals.taiKhoan.tenDangNhap}">
         <div class="row chat-container">
             <!-- Danh sách cuộc hội thoại (bên trái) -->
             <div class="col-md-4 conversation-list-col p-0">
                 <div class="header-section p-3 border-bottom">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Hỗ trợ khách hàng</h5>
-                        <div class="d-flex">
-                            <button class="btn btn-sm btn-light me-2" title="Làm mới" id="btnRefresh">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
-                            <div class="form-check form-switch d-flex align-items-center">
-                                <input class="form-check-input" type="checkbox" id="toggleAvailability" checked>
-                                <label class="form-check-label ms-1 small text-success" for="toggleAvailability">
-                                    Sẵn sàng
-                                </label>
-                            </div>
-                        </div>
                     </div>
                     <div class="search-box mt-3">
                         <div class="input-group">
@@ -33,109 +27,13 @@
                 </div>
                 
                 <div class="conversations-section overflow-auto">
-                    <!-- Cuộc hội thoại đang chọn -->
-                    <div class="conversation-item active p-3 border-bottom" data-conversation-id="1">
+                    <!-- Cuộc hội thoại -->
+                    <div style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%;">
                         <div class="d-flex">
-                            <div class="avatar-wrapper me-3">
-                                <div class="avatar">
-                                    <span class="avatar-text">NV</span>
-                                </div>
-                                <span class="status-indicator online"></span>
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="visually-hidden">Loading...</span>
                             </div>
-                            <div class="conversation-info flex-grow-1">
-                                <div class="d-flex justify-content-between">
-                                    <h6 class="mb-0">Nguyễn Văn A</h6>
-                                    <small class="text-muted">12:30</small>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <p class="text-truncate text-muted mb-0 small">
-                                        Tôi muốn đặt bàn vào tối nay cho 4 người
-                                    </p>
-                                    <span class="badge rounded-pill bg-primary ms-2">3</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Cuộc hội thoại khác -->
-                    <div class="conversation-item p-3 border-bottom" data-conversation-id="2">
-                        <div class="d-flex">
-                            <div class="avatar-wrapper me-3">
-                                <div class="avatar">
-                                    <span class="avatar-text">TL</span>
-                                </div>
-                                <span class="status-indicator online"></span>
-                            </div>
-                            <div class="conversation-info flex-grow-1">
-                                <div class="d-flex justify-content-between">
-                                    <h6 class="mb-0">Trần Thị Lan</h6>
-                                    <small class="text-muted">11:45</small>
-                                </div>
-                                <p class="text-truncate text-muted mb-0 small">
-                                    Nhà hàng còn món đặc biệt nào không?
-                                </p>
-                                <small class="text-muted">Khách online • Hỏi đáp</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="conversation-item p-3 border-bottom" data-conversation-id="3">
-                        <div class="d-flex">
-                            <div class="avatar-wrapper me-3">
-                                <div class="avatar">
-                                    <span class="avatar-text">HM</span>
-                                </div>
-                                <span class="status-indicator offline"></span>
-                            </div>
-                            <div class="conversation-info flex-grow-1">
-                                <div class="d-flex justify-content-between">
-                                    <h6 class="mb-0">Hoàng Minh</h6>
-                                    <small class="text-muted">Hôm qua</small>
-                                </div>
-                                <p class="text-truncate text-muted mb-0 small">
-                                    Cảm ơn bạn rất nhiều về thông tin
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="conversation-item p-3 border-bottom" data-conversation-id="4">
-                        <div class="d-flex">
-                            <div class="avatar-wrapper me-3">
-                                <div class="avatar">
-                                    <span class="avatar-text">PT</span>
-                                </div>
-                                <span class="status-indicator away"></span>
-                            </div>
-                            <div class="conversation-info flex-grow-1">
-                                <div class="d-flex justify-content-between">
-                                    <h6 class="mb-0">Phạm Thanh</h6>
-                                    <small class="text-muted">10:15</small>
-                                </div>
-                                <p class="text-truncate text-muted mb-0 small">
-                                    Tôi muốn biết thực đơn hôm nay có gì
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="conversation-item p-3 border-bottom" data-conversation-id="5">
-                        <div class="d-flex">
-                            <div class="avatar-wrapper me-3">
-                                <div class="avatar">
-                                    <span class="avatar-text">LD</span>
-                                </div>
-                                <span class="status-indicator online"></span>
-                            </div>
-                            <div class="conversation-info flex-grow-1">
-                                <div class="d-flex justify-content-between">
-                                    <h6 class="mb-0">Lê Đức</h6>
-                                    <small class="text-muted">09:30</small>
-                                </div>
-                                <p class="text-truncate text-muted mb-0 small">
-                                    Nhà hàng có dịch vụ giao hàng tận nơi không?
-                                </p>
-                            </div>
+                            <span class="text-secondary ms-2">Đang tải danh sách cuộc hội thoại...</span>
                         </div>
                     </div>
                 </div>
@@ -143,157 +41,7 @@
             
             <!-- Khu vực chat (bên phải) -->
             <div class="col-md-8 chat-area-col p-0 d-flex flex-column">
-                <!-- Header hội thoại -->
-                <div class="chat-header p-3 border-bottom">
-                    <div class="d-flex align-items-center">
-                        <div class="avatar-wrapper me-3">
-                            <div class="avatar">
-                                <span class="avatar-text">NV</span>
-                            </div>
-                            <span class="status-indicator online"></span>
-                        </div>
-                        <div class="user-info">
-                            <h6 class="mb-0">Nguyễn Văn A</h6>
-                            <small class="text-muted">
-                                <span id="customerStatus">Đang trực tuyến</span> • Email: nguyenvana@example.com
-                            </small>
-                        </div>
-                        <div class="ms-auto">
-                            <div class="btn-group">
-                                <button class="btn btn-sm btn-light" id="btnUserInfo" title="Thông tin khách hàng">
-                                    <i class="fas fa-user"></i>
-                                </button>
-                                <button class="btn btn-sm btn-light" id="btnChatHistory" title="Lịch sử trò chuyện">
-                                    <i class="fas fa-history"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-success" id="btnResolve" title="Đánh dấu đã giải quyết">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 
-                <!-- Khu vực tin nhắn -->
-                <div class="chat-messages p-3" id="chatMessages">
-                    <!-- Ngày -->
-                    <div class="chat-date text-center mb-3">
-                        <span>Hôm nay</span>
-                    </div>
-                    
-                    <!-- Tin nhắn từ khách hàng -->
-                    <div class="message-row customer mb-3">
-                        <div class="message-content">
-                            <div class="message-bubble">
-                                Xin chào! Tôi muốn đặt bàn vào tối nay cho 4 người, lúc 7 giờ tối. Nhà hàng có còn bàn trống không?
-                            </div>
-                            <div class="message-info">
-                                <small class="text-muted">12:15</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Tin nhắn từ nhân viên -->
-                    <div class="message-row staff mb-3">
-                        <div class="message-content">
-                            <div class="message-bubble">
-                                Chào anh/chị! Dạ nhà hàng chúng tôi vẫn còn bàn vào thời điểm 7 giờ tối nay ạ. Anh/chị muốn đặt bàn trong nhà hay ngoài sân thượng ạ?
-                            </div>
-                            <div class="message-info text-end">
-                                <small class="text-muted">12:17</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Tin nhắn từ khách hàng -->
-                    <div class="message-row customer mb-3">
-                        <div class="message-content">
-                            <div class="message-bubble">
-                                Tôi muốn đặt bàn ở khu vực trong nhà, gần cửa sổ nếu có thể
-                            </div>
-                            <div class="message-info">
-                                <small class="text-muted">12:20</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Tin nhắn từ nhân viên -->
-                    <div class="message-row staff mb-3">
-                        <div class="message-content">
-                            <div class="message-bubble">
-                                Dạ vâng, chúng tôi đã ghi nhận yêu cầu đặt bàn của anh/chị. Chúng tôi có một bàn tuyệt vời gần cửa sổ với tầm nhìn ra vườn. Anh/chị vui lòng cho biết thông tin tên và số điện thoại để chúng tôi xác nhận đặt bàn ạ?
-                            </div>
-                            <div class="message-info text-end">
-                                <small class="text-muted">12:22</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Tin nhắn từ khách hàng -->
-                    <div class="message-row customer mb-3">
-                        <div class="message-content">
-                            <div class="message-bubble">
-                                Tên tôi là Nguyễn Văn A, số điện thoại 0987654321
-                            </div>
-                            <div class="message-info">
-                                <small class="text-muted">12:25</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Tin nhắn từ khách hàng -->
-                    <div class="message-row customer mb-3">
-                        <div class="message-content">
-                            <div class="message-bubble">
-                                Nhân tiện cho tôi hỏi nhà hàng có món đặc biệt nào tối nay không?
-                            </div>
-                            <div class="message-info">
-                                <small class="text-muted">12:30</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Khu vực nhập tin nhắn -->
-                <div class="chat-input-area p-3 border-top mt-auto">
-                    <div class="d-flex align-items-center">
-                        <div class="dropdown me-2">
-                            <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-reply"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item quick-reply" href="#">Xin chào quý khách, tôi có thể giúp gì cho bạn?</a></li>
-                                <li><a class="dropdown-item quick-reply" href="#">Cảm ơn bạn đã liên hệ với nhà hàng chúng tôi.</a></li>
-                                <li><a class="dropdown-item quick-reply" href="#">Vui lòng đợi tôi kiểm tra thông tin cho bạn.</a></li>
-                                <li><a class="dropdown-item quick-reply" href="#">Xin lỗi vì đã để bạn đợi lâu.</a></li>
-                                <li class="dropdown-divider"></li>
-                                <li><a class="dropdown-item quick-reply" href="#">Bạn có cần tôi hỗ trợ thêm thông tin gì không?</a></li>
-                                <li><a class="dropdown-item quick-reply" href="#">Dạ, nhà hàng hiện có các món đặc biệt bao gồm: Beefsteak Úc nhập khẩu và Cá hồi Na Uy.</a></li>
-                                <li><a class="dropdown-item quick-reply" href="#">Dạ, đơn hàng online của bạn sẽ được giao trong khoảng 30-45 phút.</a></li>
-                            </ul>
-                        </div>
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Nhập tin nhắn..." id="messageInput">
-                            <button class="btn btn-primary" type="button" id="btnSendMessage">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center mt-2">
-                        <div class="form-check me-3">
-                            <input class="form-check-input" type="checkbox" id="btnSendMenu">
-                            <label class="form-check-label small" for="btnSendMenu">
-                                Gửi link thực đơn
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="btnSendPromo">
-                            <label class="form-check-label small" for="btnSendPromo">
-                                Gửi khuyến mãi
-                            </label>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

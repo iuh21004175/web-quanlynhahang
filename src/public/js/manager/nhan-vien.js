@@ -20,6 +20,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     txtNgayBatDau.value = `${year}-${month}-${day}`;
     // Thao tác với bảng
     thaoTacVoiBang(listNhanVien);
+    document.getElementById('positionFilter').onchange = function(){
+        const selectedValue = this.value;
+        const filteredList = listNhanVien.filter(nv => nv.chucVu == selectedValue || selectedValue == '');
+        thaoTacVoiBang(filteredList);
+    }
     // Xử lý form thêm nhân viên
     const addStaffForm = document.getElementById('addStaffForm');
     addStaffForm.addEventListener('submit', async function(e) {
@@ -198,10 +203,12 @@ function thaoTacVoiBang(list){
         `
         tableDanhSach.appendChild(row);
     })
+    // Khởi tạo tooltip cho các nút "Xem" và "Chỉnh sửa"
     const tooltips = document.querySelectorAll('[data-bs-tooltip="tooltip"]');
     tooltips.forEach(tooltip => {
         new bootstrap.Tooltip(tooltip);
     });
+    // Hiển thị thông tin chi tiết nhân viên khi nhấn nút "Xem"
     document.querySelectorAll('.btn-xem').forEach(button => {
         button.addEventListener('click', function() {
             const id = this.dataset.id;
@@ -219,6 +226,7 @@ function thaoTacVoiBang(list){
         })
 
     });
+    // Hiển thị thông tin chỉnh sửa nhân viên khi nhấn nút "Chỉnh sửa"
     document.querySelectorAll('.btn-sua').forEach(button => {
         button.addEventListener('click', function() {
             const id = this.dataset.id;

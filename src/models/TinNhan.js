@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const HoiThoai = require('./HoiThoai');
 
 const TinNhan = sequelize.define('TinNhan', {
     id: {
@@ -27,14 +28,13 @@ const TinNhan = sequelize.define('TinNhan', {
         field: 'thoi_gian_gui',
         type: DataTypes.DATE,
         allowNull: false
-    },
-    trangThai: {
-        field: 'trang_thai',
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0
     }
 }, {
     tableName: 'tin_nhan',
     timestamps: false
 });
+
+TinNhan.belongsTo(HoiThoai, { foreignKey: 'idHoiThoai' });
+HoiThoai.hasMany(TinNhan, { foreignKey: 'idHoiThoai' });
+
+module.exports = TinNhan;

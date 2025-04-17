@@ -1,140 +1,445 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Xử lý khi click vào một cuộc hội thoại
-    const conversationItems = document.querySelectorAll('.conversation-item');
-    conversationItems.forEach(item => {
-        item.addEventListener('click', function() {
-            // Remove active class from all conversations
-            conversationItems.forEach(conv => conv.classList.remove('active'));
+document.addEventListener('DOMContentLoaded', async function() {
+    const socket = io();
+    let listHoiThoai = [];
+    let isInitialLoadComplete = false;
+    let debounceTimeout = null;
+    let isLoading = false;
+    
+    // Function để tải và hiển thị dữ liệu
+    async function loadAndDisplayData() {
+        if (isLoading) return;
+        try {
+            isLoading = true;
+            console.log("Đang tải dữ liệu hội thoại...");
             
-            // Add active class to clicked conversation
-            this.classList.add('active');
+            listHoiThoai = await getAPIHoiThoai();
+            thaoTacListHoiThoai(listHoiThoai);
+            xuLyRealTime(socket, listHoiThoai);
             
-            // Remove new message indicator
-            this.classList.remove('new-message');
+            isInitialLoadComplete = true;
+            console.log("Đã tải xong dữ liệu hội thoại");
+        } catch (error) {
+            console.error("Lỗi khi tải dữ liệu:", error);
+        }
+    }
+    
+    /**
+     * Function debounce cải tiến: cộng dồn thời gian chờ
+     * Nếu có sự kiện mới đến trong lúc đang chờ, thêm thời gian vào
+     */
+    function accumulateDebounceLoadData() {
+        let waitTime = 1000; // Thời gian chờ cơ bản
+        
+        // Nếu đang có timeout chờ
+        if (debounceTimeout) {
+            clearTimeout(debounceTimeout); // Xóa timeout cũ
+        } 
+        
+        // Đặt timeout mới
+        debounceTimeout = setTimeout(loadAndDisplayData, waitTime);
+    }
+    
+    // Khi kết nối Socket.IO thành công
+    socket.on('connect', () => {
+        console.log('Đã kết nối đến server:', socket.id);
+        socket.emit('phuc-vu-vao-ho-tro');
+        
+        // Lắng nghe sự kiện cập nhật database
+        socket.on('dang-cap-nhat-du-lieu-chat', () => {
+            console.log('Nhận sự kiện cập nhật database');
             
-            // Remove badge if exists
-            const badge = this.querySelector('.badge');
-            if (badge) badge.remove();
-            
-            // In a real application, you would load conversation data here
-            const conversationId = this.getAttribute('data-conversation-id');
-            console.log('Loading conversation:', conversationId);
-            
-            // For demo purposes, update header with customer name
-            const customerName = this.querySelector('h6').textContent;
-            const headerName = document.querySelector('.chat-header h6');
-            if (headerName) headerName.textContent = customerName;
-            
-            // Scroll chat to bottom
-            setTimeout(() => {
-                scrollChatToBottom();
-            }, 100);
+            // Luôn sử dụng debounce
+            accumulateDebounceLoadData();
         });
+        // Tải dữ liệu ban đầu ngay sau khi trang được tải xong
+        if (!isInitialLoadComplete && !isLoading) {
+            accumulateDebounceLoadData();
+        }
     });
     
-    // Xử lý gửi tin nhắn
-    const messageInput = document.getElementById('messageInput');
-    const btnSendMessage = document.getElementById('btnSendMessage');
     
-    function sendMessage() {
-        const message = messageInput.value.trim();
-        if (!message) return;
-        
-        // Get current time for the message
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const timeString = `${hours}:${minutes}`;
-        
-        // Create HTML for the message
-        const messageHTML = `
-            <div class="message-row staff mb-3">
-                <div class="message-content">
-                    <div class="message-bubble">
-                        ${message}
+    // Lắng nghe sự kiện nhân viên click vào hội thoại
+    document.querySelector('.conversations-section').addEventListener('click', async function(e) {
+        const item = e.target.closest('.conversation-item');
+        if (item && !item.classList.contains('being-served')) {
+            const id = item.dataset.id;
+            item.classList.add('active');
+            
+            document.querySelectorAll('.conversation-item').forEach(otherItem => {
+                if (otherItem !== item) {
+                    otherItem.classList.remove('active');
+                }
+            });
+    
+            await showTinNhanHopThoai(socket, id, listHoiThoai);
+        }
+    });
+    
+    // Tìm kiếm cuộc hội thoại
+    const searchInput = document.getElementById('searchConversation');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            const conversationItems = document.querySelectorAll('.conversation-item');
+            
+            conversationItems.forEach(item => {
+                const name = item.querySelector('h6')?.textContent.toLowerCase();
+                const message = item.querySelector('p')?.textContent.toLowerCase();
+                const info = item.querySelector('small:last-child')?.textContent.toLowerCase();
+                
+                if ((name && name.includes(searchTerm)) || 
+                    (message && message.includes(searchTerm)) || 
+                    (info && info.includes(searchTerm))) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    }
+});
+async function getAPIHoiThoai(id = null) {
+    try {
+        const url = id ? `/api/hoi-thoai?id=${id}` : '/api/hoi-thoai';
+        const response = await fetch(url);
+        const data = await response.json();
+        if(data.status){
+            return id ? data.obj : data.list
+        }
+        else{
+            console.error('Error fetching HoiThoai:', data.error);
+            return []
+        }
+    } catch (error) {
+        console.error('Error fetching HoiThoai:', error);
+    }
+}
+async function getAPITinNhan(id) {
+    try {
+        const response = await fetch(`/api/tin-nhan?id=${id}`);
+        const data = await response.json();
+        if(data.status){
+            return data.list
+        }
+        else{
+            console.error('Error fetching TinNhan:', data.error);
+            return []
+        }
+    } catch (error) {
+        console.error('Error fetching TinNhan:', error);
+        return []
+    }
+}
+function scrollChatToBottom() {
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+}
+function scrollHoiThoaiToBottom(delta = null) {
+    const htmlListHoiThoai = document.querySelector('.conversations-section')
+    if(delta != null){
+        htmlListHoiThoai.scrollTop += delta;
+    }
+    else{
+        htmlListHoiThoai.scrollTop = htmlListHoiThoai.scrollHeight;
+    }
+
+}
+function thaoTacListHoiThoai(list){
+    const htmlListHoiThoai = document.querySelector('.conversations-section')
+    const htmlKhuVucChat = document.querySelector('.chat-area-col')
+    htmlListHoiThoai.innerHTML = ''
+    list.forEach(item => {
+        let time = ''
+        if(item.thoiGianGuiCuoi != null){
+            const date = new Date(item.thoiGianGuiCuoi);
+            const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+            time = date.toLocaleTimeString('en-US', options)
+        }
+        const html = `
+            <div class="conversation-item p-3 border-bottom ${item.dangTraLoi == 1 ? 'being-served' : ''}" data-id="${item.id}">
+                <div class="d-flex">
+                    <div>
+                        <div class="avatar-wrapper me-3">
+                            <div class="avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <span class="status-indicator ${item.KhachHang.hoatDong == 1 ? 'online' : 'offline'}"></span>
+                        </div>
                     </div>
-                    <div class="message-info text-end">
-                        <small class="text-muted">${timeString}</small>
+                    <div class="conversation-info flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-0 ht-tieuDe">${item.tieuDe}</h6>
+                                <small class="text-muted ht-thoiGian">${time}</small>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p class="text-truncate text-muted mb-0 small ht-noiDung">
+                                    ${item.nguoiGuiCuoi == 1 ? '' : 'Phục vụ: '} ${item.noiDungCuoi== null ? '' : item.noiDungCuoi }
+                                </p>
+                                <span class="badge rounded-pill bg-primary ms-2 ht-soChuaDoc">${parseInt(item.soChuaDoc) > 0 ? item.soChuaDoc : ''}</span>
+                            </div>
+                            <div class="conversation-status ${item.dangTraLoi == 1 ? 'show' : ''}">
+                                <small class="text-danger">
+                                    <i class="fas fa-user-clock"></i> Đang trả lời
+                                </small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         `;
+        htmlListHoiThoai.insertAdjacentHTML('beforeend', html);
+    });
+    // Hiển thị khu vực chat khi chưa click vào hội thoại nào
+    htmlKhuVucChat.innerHTML = `
+         <div style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%;">
+            <p>Vui lòng chọn một cuộc hội thoại để bắt đầu trò chuyện.</p>
+        </div>
+    `;
+
+
+}
+function xuLyRealTime(socket, list){
+    // Lắng nghe sự kiện khi có tin nhắn mới từ khách hàng
+    socket.on('tin-nhan-khach-hang', async (data) => {
+
+        // Giải nén dữ liệu
+        const { idKhachHang, noiDung, thoiGianGui } = data;
+
+        // Chuyển NodeList thành Array để dùng .find()
+        const htmlHoiThoai = Array.from(document.querySelectorAll('.conversation-item')).find(item => item.dataset.id == idKhachHang);
+        // Cập nhật thời gian
+        const date = new Date(thoiGianGui);
+        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+        // Nếu tìm thấy hội thoại thì cập nhật
+        if (htmlHoiThoai) {
+            // Cập nhật nội dung cuối cùng
+            htmlHoiThoai.querySelector('.ht-noiDung').innerHTML = noiDung;
         
-        // Add message to chat
-        const chatMessages = document.getElementById('chatMessages');
-        chatMessages.insertAdjacentHTML('beforeend', messageHTML);
-        
-        // Check if we need to send menu or promo
-        const sendMenu = document.getElementById('btnSendMenu');
-        const sendPromo = document.getElementById('btnSendPromo');
-        
-        if (sendMenu && sendMenu.checked) {
-            setTimeout(() => {
-                const menuHTML = `
-                    <div class="message-row staff mb-3">
-                        <div class="message-content">
-                            <div class="message-bubble">
-                                Đây là link thực đơn của nhà hàng: <a href="#" class="text-white">https://nhahang.com/thuc-don</a>
-                            </div>
-                            <div class="message-info text-end">
-                                <small class="text-muted">${hours}:${String(parseInt(minutes) + 1).padStart(2, '0')}</small>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                chatMessages.insertAdjacentHTML('beforeend', menuHTML);
-                sendMenu.checked = false;
-                scrollChatToBottom();
-            }, 500);
-        }
-        
-        if (sendPromo && sendPromo.checked) {
-            setTimeout(() => {
-                const promoHTML = `
-                    <div class="message-row staff mb-3">
-                        <div class="message-content">
-                            <div class="message-bubble">
-                                Nhà hàng đang có chương trình khuyến mãi: Giảm 15% cho đơn đặt bàn online trước 3 ngày. Mã ưu đãi: ONLINE15
-                            </div>
-                            <div class="message-info text-end">
-                                <small class="text-muted">${hours}:${String(parseInt(minutes) + 2).padStart(2, '0')}</small>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                chatMessages.insertAdjacentHTML('beforeend', promoHTML);
-                sendPromo.checked = false;
-                scrollChatToBottom();
-            }, 1000);
-        }
-        
-        // Clear input and scroll to bottom
-        messageInput.value = '';
-        scrollChatToBottom();
-        
-        // Simulate customer typing (for demo)
-        simulateCustomerTyping();
-    }
-    
-    function scrollChatToBottom() {
-        const chatMessages = document.getElementById('chatMessages');
-        if (chatMessages) {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-    }
-    
-    // Gửi tin nhắn khi nhấn nút hoặc Enter
-    if (btnSendMessage && messageInput) {
-        btnSendMessage.addEventListener('click', sendMessage);
-        
-        messageInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
+            // Cập nhật số tin chưa đọc
+            const soChuaDocHT = htmlHoiThoai.querySelector('.ht-soChuaDoc').textContent;
+            if(htmlHoiThoai.classList.contains('active')){
+                htmlHoiThoai.querySelector('.ht-soChuaDoc').innerHTML = ''
             }
-        });
-    }
-    
+            else{
+                htmlHoiThoai.querySelector('.ht-soChuaDoc').innerHTML = soChuaDocHT != '' ? parseInt(soChuaDocHT) + 1 : 1;
+                document.querySelector('.conversations-section').prepend(htmlHoiThoai)
+                
+                scrollHoiThoaiToBottom(htmlHoiThoai.getBoundingClientRect().height)
+            }
+            // Cập nhật tin nhắn trong hộp đã chọn
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages && chatMessages.dataset.id == idKhachHang) {
+                chatMessages.innerHTML += `
+                    <div class="message-row customer mb-3">
+                        <div class="message-content">
+                            <div class="message-bubble">
+                                ${noiDung}
+                            </div>
+                            <div class="message-info">
+                                <small class="text-muted">${date.toLocaleTimeString('en-US', options)}</small>
+                            </div>
+                        </div>
+                    </div>
+                `
+                scrollChatToBottom();
+            }
+        } 
+        else {
+            // Nếu không thấy thì thêm hộp thoại mới vào danh sách hồi thoại
+            const hoiThoai = await getAPIHoiThoai(idKhachHang)
+            const html = `
+            <div class="conversation-item p-3 border-bottom ${hoiThoai.dangTraLoi == 1 ? 'being-served' : ''}" data-id="${hoiThoai.id}">
+                <div class="d-flex">
+                    <div>
+                        <div class="avatar-wrapper me-3">
+                            <div class="avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <span class="status-indicator ${hoiThoai.KhachHang.hoatDong == 1 ? 'online': 'offline'}"></span>
+                        </div>
+                    </div>
+                    <div class="conversation-info flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-0 ht-tieuDe">${hoiThoai.tieuDe}</h6>
+                                <small class="text-muted ht-thoiGian">${date.toLocaleTimeString('en-US', options)}</small>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p class="text-truncate text-muted mb-0 small ht-noiDung">
+                                    ${hoiThoai.nguoiGuiCuoi == 1 ? '' : 'Phục vụ: '} ${hoiThoai.noiDungCuoi== null ? '' : hoiThoai.noiDungCuoi }
+                                </p>
+                                <span class="badge rounded-pill bg-primary ms-2 ht-soChuaDoc">${parseInt(hoiThoai.soChuaDoc) > 0 ? hoiThoai.soChuaDoc : ''}</span>
+                            </div>
+                            <div class="conversation-status ${hoiThoai.dangTraLoi == 1 ? 'show' : ''}">
+                                <small class="text-danger">
+                                    <i class="fas fa-user-clock"></i> Đang trả lời
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+            document.querySelector('.conversations-section').insertAdjacentHTML('afterbegin', html);
+            list.unshift(hoiThoai)
+            scrollHoiThoaiToBottom(document.querySelector('.conversation-item').getBoundingClientRect().height)
+        }
+        
+    })
+    socket.on('phuc-vu-chon-hop-thoai', (data) => {
+        const {id, idHoiThoaiCu} = data
+        const hoiThoaiCu = Array.from(document.querySelectorAll('.conversation-item')).find(item => item.dataset.id == idHoiThoaiCu);
+        const hoiThoai = Array.from(document.querySelectorAll('.conversation-item')).find(item => item.dataset.id == id);
+        if(hoiThoaiCu){
+            hoiThoaiCu.classList.remove('being-served')
+            hoiThoaiCu.querySelector('.conversation-status').classList.remove('show')
+        }
+        if(hoiThoai){
+            hoiThoai.classList.add('being-served')
+            hoiThoai.querySelector('.conversation-status').classList.add('show')
+            hoiThoai.querySelector('.ht-soChuaDoc').innerHTML = ''
+        }
+    })
+    socket.on('tin-nhan-nha-hang', (data) => {
+        const { idKhachHang, noiDung, thoiGianGui } = data;
+        const date = new Date(thoiGianGui);
+        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+        // Nếu tìm thấy hội thoại thì cập nhật
+        const htmlHoiThoai = Array.from(document.querySelectorAll('.conversation-item')).find(item => item.dataset.id == idKhachHang);
+        if (htmlHoiThoai) {
+            htmlHoiThoai.querySelector('.ht-noiDung').innerHTML = `Phuc vụ: ${noiDung}`;
+            htmlHoiThoai.querySelector('.ht-thoiGian').innerHTML = date.toLocaleTimeString('en-US', options)
+            htmlHoiThoai.querySelector('.ht-soChuaDoc').innerHTML = ''
+        }
+    })
+    socket.on('khach-hang-online', (data) => {
+        const { id } = data;
+        const hoiThoai = list.find(item => item.id == id)
+        const htmlHoiThoai = Array.from(document.querySelectorAll('.conversation-item')).find(item => item.dataset.id == id);
+        if (htmlHoiThoai) {
+            htmlHoiThoai.querySelector('.status-indicator').classList.remove('offline')
+            htmlHoiThoai.querySelector('.status-indicator').classList.add('online')
+            if(htmlHoiThoai.classList.contains('active')){
+                document.querySelector('.chat-area-col .status-indicator').classList.remove('offline')
+                document.querySelector('.chat-area-col .status-indicator').classList.add('online')
+                document.getElementById('customerStatus').innerHTML = 'Online'
+            }
+            hoiThoai.KhachHang.hoatDong = 1
+        }
+       
+        
+    })
+    socket.on('khach-hang-offline', (data) => {
+        const { id } = data;
+        const hoiThoai = list.find(item => item.id == id)
+        const htmlHoiThoai = Array.from(document.querySelectorAll('.conversation-item')).find(item => item.dataset.id == id);
+        if (htmlHoiThoai) {
+            htmlHoiThoai.querySelector('.status-indicator').classList.remove('online')
+            htmlHoiThoai.querySelector('.status-indicator').classList.add('offline')
+            if(htmlHoiThoai.classList.contains('active')){
+                document.querySelector('.chat-area-col .status-indicator').classList.remove('online')
+                document.querySelector('.chat-area-col .status-indicator').classList.add('offline')
+                document.getElementById('customerStatus').innerHTML = 'Offline'
+            }
+            hoiThoai.KhachHang.hoatDong = 0
+        }
+       
+    })
+}
+async function showTinNhanHopThoai(socket, id, list){
+    const listTinNhanHoiThoai = await getAPITinNhan(id)
+    const htmlKhuVucChat = document.querySelector('.chat-area-col')
+    const hoiThoai = list.find(item => item.id == id)
+    htmlKhuVucChat.innerHTML = `
+                <!-- Header hội thoại -->
+                <div class="chat-header p-3 border-bottom">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-wrapper me-3">
+                            <div class="avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <span class="status-indicator ${hoiThoai.KhachHang.hoatDong == 1 ? 'online': 'offline'}"></span>
+                        </div>
+                        <div class="user-info">
+                            <h6 class="mb-0">${hoiThoai.tieuDe}</h6>
+                            <small class="text-muted">
+                                <span id="customerStatus">${hoiThoai.KhachHang.hoatDong == 1 ? 'Online': 'Offline'}</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Khu vực tin nhắn -->
+                <div class="chat-messages p-3" id="chatMessages" data-id="${hoiThoai.id}">
+                    <!-- Ngày -->
+                    <div class="chat-date text-center mb-3">
+                        <span>Hôm nay</span>
+                    </div>
+                </div>
+                
+                <!-- Khu vực nhập tin nhắn -->
+                <div class="chat-input-area p-3 border-top mt-auto">
+                    <div class="d-flex align-items-center">
+                        <div class="dropdown me-2">
+                            <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-reply"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item quick-reply" href="#">Xin chào quý khách, tôi có thể giúp gì cho bạn?</a></li>
+                                <li><a class="dropdown-item quick-reply" href="#">Cảm ơn bạn đã liên hệ với nhà hàng chúng tôi.</a></li>
+                                <li><a class="dropdown-item quick-reply" href="#">Vui lòng đợi tôi kiểm tra thông tin cho bạn.</a></li>
+                                <li><a class="dropdown-item quick-reply" href="#">Xin lỗi vì đã để bạn đợi lâu.</a></li>
+                                <li class="dropdown-divider"></li>
+                                <li><a class="dropdown-item quick-reply" href="#">Bạn có cần tôi hỗ trợ thêm thông tin gì không?</a></li>
+                                <li><a class="dropdown-item quick-reply" href="#">Dạ, nhà hàng hiện có các món đặc biệt bao gồm: Beefsteak Úc nhập khẩu và Cá hồi Na Uy.</a></li>
+                                <li><a class="dropdown-item quick-reply" href="#">Dạ, đơn hàng online của bạn sẽ được giao trong khoảng 30-45 phút.</a></li>
+                            </ul>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Nhập tin nhắn..." id="messageInput">
+                            <button class="btn btn-primary" type="button" id="btnSendMessage">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+    `
+    const chatMessages = document.getElementById('chatMessages');
+    listTinNhanHoiThoai.forEach(item => {
+        const date = new Date(item.thoiGianGui);
+        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+        const time = date.toLocaleTimeString('en-US', options)
+        if(item.nguoiGui == 1){
+            chatMessages.innerHTML += `
+                <div class="message-row customer mb-3">
+                    <div class="message-content">
+                        <div class="message-bubble">
+                                ${item.noiDung}
+                        </div>
+                        <div class="message-info">
+                            <small class="text-muted">${time}</small>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+        else{
+            chatMessages.innerHTML += `
+                <div class="message-row staff mb-3">
+                    <div class="message-content">
+                        <div class="message-bubble">
+                        ${item.noiDung}
+                        </div>
+                        <div class="message-info text-end">
+                            <small class="text-muted">${time}</small>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+        scrollChatToBottom();
+    })
     // Xử lý các template tin nhắn nhanh
     const quickReplyItems = document.querySelectorAll('.quick-reply');
     quickReplyItems.forEach(item => {
@@ -144,137 +449,56 @@ document.addEventListener('DOMContentLoaded', function() {
             messageInput.focus();
         });
     });
-    
-    // Cuộn xuống cuối cùng khi tải trang
-    scrollChatToBottom();
-    
-    // Xử lý trạng thái sẵn sàng
-    const toggleAvailability = document.getElementById('toggleAvailability');
-    if (toggleAvailability) {
-        toggleAvailability.addEventListener('change', function() {
-            const label = this.nextElementSibling;
-            if (this.checked) {
-                label.textContent = 'Sẵn sàng';
-                label.classList.remove('text-muted');
-                label.classList.add('text-success');
-            } else {
-                label.textContent = 'Không sẵn sàng';
-                label.classList.remove('text-success');
-                label.classList.add('text-muted');
+    // Gửi tin nhắn khi nhấn nút hoặc Enter
+    const btnSendMessage = document.getElementById('btnSendMessage');
+    const messageInput = document.getElementById('messageInput');
+    if (btnSendMessage && messageInput) {
+        btnSendMessage.addEventListener('click', sendMessage);
+        
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
             }
         });
+
     }
-    
-    // Xử lý nút làm mới
-    const btnRefresh = document.getElementById('btnRefresh');
-    if (btnRefresh) {
-        btnRefresh.addEventListener('click', function() {
-            this.querySelector('i').classList.add('fa-spin');
-            
-            // Simulate refreshing data
-            setTimeout(() => {
-                this.querySelector('i').classList.remove('fa-spin');
-                // In a real application, you would refresh conversation list here
-            }, 1000);
-        });
-    }
-    
-    // Xử lý nút đánh dấu đã giải quyết
-    const btnResolve = document.getElementById('btnResolve');
-    if (btnResolve) {
-        btnResolve.addEventListener('click', function() {
-            const activeConversation = document.querySelector('.conversation-item.active');
-            if (activeConversation) {
-                const smallText = activeConversation.querySelector('small:last-child');
-                if (smallText) {
-                    let text = smallText.textContent;
-                    if (!text.includes('Đã giải quyết')) {
-                        smallText.textContent = text.split('•')[0] + '• Đã giải quyết';
-                        
-                        // Change button style
-                        this.classList.remove('btn-outline-success');
-                        this.classList.add('btn-success');
-                        this.innerHTML = '<i class="fas fa-check"></i>';
-                        this.title = 'Đã giải quyết';
-                    }
-                }
-            }
-        });
-    }
-    
-    // Tìm kiếm cuộc hội thoại
-    const searchInput = document.getElementById('searchConversation');
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase().trim();
-            
-            conversationItems.forEach(item => {
-                const name = item.querySelector('h6').textContent.toLowerCase();
-                const message = item.querySelector('p').textContent.toLowerCase();
-                const info = item.querySelector('small:last-child').textContent.toLowerCase();
-                
-                if (name.includes(searchTerm) || message.includes(searchTerm) || info.includes(searchTerm)) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        });
-    }
-    
-    // Mô phỏng khách hàng đang gõ
-    function simulateCustomerTyping() {
-        const chatMessages = document.getElementById('chatMessages');
-        const typingHTML = `
-            <div class="message-row customer mb-3" id="typingIndicator">
+    // Hàm gửi tin nhắn
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const date = new Date();
+        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+        const time = date.toLocaleTimeString('en-US', options)
+        chatMessages.innerHTML += `
+            <div class="message-row staff mb-3">
                 <div class="message-content">
-                    <div class="typing-indicator">
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                    <div class="message-bubble">
+                        ${messageInput.value.trim()}
+                    </div>
+                    <div class="message-info text-end">
+                        <small class="text-muted">${time}</small>
                     </div>
                 </div>
             </div>
-        `;
-        
-        chatMessages.insertAdjacentHTML('beforeend', typingHTML);
+        `
+        socket.emit('nha-hang-gui-tin-nhan', {
+            idKhachHang: id, 
+            noiDung: messageInput.value,
+            thoiGianGui: new Date().toISOString() 
+        });
+        const htmlHoiThoai = Array.from(document.querySelectorAll('.conversation-item')).find(item => item.classList.contains('active'));
+        htmlHoiThoai.querySelector('.ht-noiDung').innerHTML = `Phuc vụ: ${messageInput.value}`;
+        htmlHoiThoai.querySelector('.ht-thoiGian').innerHTML = time
+        messageInput.value = '';
         scrollChatToBottom();
-        
-        // Mô phỏng phản hồi từ khách hàng sau một khoảng thời gian
-        setTimeout(() => {
-            const typingIndicator = document.getElementById('typingIndicator');
-            if (typingIndicator) typingIndicator.remove();
-            
-            // Các phản hồi có thể có từ khách hàng
-            const responses = [
-                "Cảm ơn bạn rất nhiều!",
-                "Vâng, tôi hiểu rồi. Cảm ơn bạn!",
-                "Thông tin này rất hữu ích.",
-                "Tôi có thể hỏi thêm về giờ mở cửa của nhà hàng không?",
-                "Nhà hàng có chỗ đậu xe không?",
-                "Tôi nên đặt bàn trước bao lâu?"
-            ];
-            
-            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            
-            const responseHTML = `
-                <div class="message-row customer mb-3">
-                    <div class="message-content">
-                        <div class="message-bubble">
-                            ${randomResponse}
-                        </div>
-                        <div class="message-info">
-                            <small class="text-muted">${hours}:${minutes}</small>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            chatMessages.insertAdjacentHTML('beforeend', responseHTML);
-            scrollChatToBottom();
-        }, 2000 + Math.random() * 2000); // Random delay between 2-4 seconds
     }
-});
+    socket.emit('nha-hang-doc-tin-nhan', {
+        id
+    })
+    // Cập nhật số tin chưa đọc về 0
+    let listHTMLHoiThoai = document.querySelectorAll('.conversation-item');
+    const htmlHoiThoai = Array.from(listHTMLHoiThoai).find(item => item.dataset.id == id);
+    if (htmlHoiThoai) {
+        htmlHoiThoai.querySelector('.ht-soChuaDoc').innerHTML = ''
+    }
+}

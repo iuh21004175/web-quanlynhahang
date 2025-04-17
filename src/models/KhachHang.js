@@ -43,6 +43,12 @@ const KhachHang = sequelize.define('KhachHang', {
         field: 'mat_khau',
         type: DataTypes.STRING,
         allowNull: false
+    },
+    hoatDong: {
+        field: 'hoat_dong',
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
     }
 }, {
     tableName: 'khach_hang',

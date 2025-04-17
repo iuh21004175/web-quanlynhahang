@@ -31,12 +31,6 @@ const NguyenLieu = sequelize.define('NguyenLieu', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    trangThai: {
-        field: 'trang_thai',
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-    },
     hinhAnh: {
         field: 'hinh_anh',
         type: DataTypes.TEXT,

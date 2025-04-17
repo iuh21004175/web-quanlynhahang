@@ -33,6 +33,18 @@ const HoiThoai = sequelize.define('HoiThoai', {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0
+    },
+    soChuaDocKhach: {
+        field: 'so_chua_doc_khach',
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+    },
+    dangTraLoi:{
+        field: 'dang_tra_loi',
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
     }
 }, {
     tableName: 'hoi_thoai',
