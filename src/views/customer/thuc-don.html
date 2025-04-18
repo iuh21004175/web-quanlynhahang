@@ -1,0 +1,80 @@
+<%- include('../layouts/customer.html', {
+    title: 'Thực đơn',
+    styles: '<link rel="stylesheet" href="/css/customer/thuc-don.css">',
+    scripts: '<script src="/js/customer/thuc-don.js"></script>',
+    body: `
+    <!-- Hero Section -->
+<section class="menu-hero-section py-5 bg-light">
+    <div class="container">
+        <div class="text-center" data-aos="fade-up">
+            <h1 class="display-4 fw-bold mb-4">Thực Đơn</h1>
+            <div class="section-divider mx-auto my-4"></div>
+            <p class="lead mb-0">Khám phá menu đa dạng với những món ăn đặc sắc</p>
+        </div>
+    </div>
+</section>
+
+<!-- Menu Categories Section -->
+<section class="menu-categories py-5">
+    <div class="container">
+        <div id="danhSachLoaiMonAn" class="menu-filter mb-5" data-aos="fade-up">
+            <ul class="nav nav-pills justify-content-center" id="danhSachLoaiMonList">
+                
+            </ul>
+        </div>
+
+        <div id="danhSachMonAn" class="row g-4">
+            <!-- Menu Item Card -->
+        </div>
+    </div>
+</section>
+
+<!-- Shopping Cart Sidebar -->
+<!-- <div class="offcanvas offcanvas-end" id="cartSidebar">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Giỏ hàng của bạn</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="cart-items"> -->
+            <!-- Cart Item -->
+            <!-- <div class="cart-item d-flex align-items-center mb-3">
+                <img src="/images/menu/dish1-thumb.jpg" alt="Món ăn" class="cart-item-image me-3">
+                <div class="cart-item-details flex-grow-1">
+                    <h6 class="cart-item-title mb-1">Bò nướng BBQ</h6>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="input-group input-group-sm" style="width: 100px;">
+                            <button class="btn btn-outline-secondary" type="button">-</button>
+                            <input type="number" class="form-control text-center" value="1" min="1">
+                            <button class="btn btn-outline-secondary" type="button">+</button>
+                        </div>
+                        <span class="cart-item-price text-primary">185.000₫</span>
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-link text-danger ms-2">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>  -->
+            <!-- Thêm các cart item khác -->
+         <!-- </div>
+
+        <div class="cart-summary mt-4">
+            <div class="d-flex justify-content-between mb-2">
+                <span>Tạm tính:</span>
+                <span>185.000₫</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+                <span>Phí dịch vụ:</span>
+                <span>18.500₫</span>
+            </div>
+            <div class="d-flex justify-content-between fw-bold">
+                <span>Tổng cộng:</span>
+                <span class="text-primary">203.500₫</span>
+            </div>
+            <button class="btn btn-primary w-100 mt-4">Đặt món ngay</button>
+        </div>
+    </div> 
+</div> -->
+ `
+}) %>
+

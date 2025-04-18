@@ -1,9 +1,24 @@
+<style>
+    .fixed-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1050; /* cao hơn mọi thứ khác */
+      }
+      
+      body {
+        padding-top: 120px; /* hoặc đúng chiều cao của header, để nội dung không bị che */
+      }
+      
+</style>
+<div class="fixed-header">
 <div class="top-bar bg-dark text-light py-2">
     <div class="container">
         <div class="row">
             <div class="col-md-6">
                 <span><i class="fas fa-phone me-2"></i> 0987 654 321</span>
-                <span class="ms-3"><i class="fas fa-envelope me-2"></i> info@nhahangxyz.com</span>
+                <span class="ms-3"><i class="fas fa-envelope me-2"></i> info@ndrestaurant.com</span>
             </div>
             <div class="col-md-6 text-end">
                 <span><i class="fas fa-clock me-2"></i> Mở cửa: 10:00 - 22:00</span>
@@ -15,7 +30,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="/">
-            <img src="/images/logo.png" alt="Nhà Hàng XYZ" height="50">
+            <img src="https://res.cloudinary.com/dtkm5uyx1/image/upload/v1743584417/hinh-anh/logo.jpg"  height="60">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
             <span class="navbar-toggler-icon"></span>
@@ -30,17 +45,11 @@
                     <a class="nav-link <%= typeof isMenu != 'undefined' && isMenu ? 'active' : '' %>" href="/thuc-don">Thực đơn</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <%= typeof isPromotion != 'undefined' && isPromotion ? 'active' : '' %>" href="/khuyen-mai">Khuyến mãi</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <%= typeof isReservation != 'undefined' && isReservation ? 'active' : '' %>" href="/dat-ban">Đặt bàn</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link <%= typeof isAbout != 'undefined' && isAbout ? 'active' : '' %>" href="/gioi-thieu">Giới thiệu</a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link <%= typeof isContact != 'undefined' && isContact ? 'active' : '' %>" href="/lien-he">Liên hệ</a>
-                </li>
+                </li> -->
             </ul>
             
             <div class="d-flex align-items-center">
@@ -68,7 +77,7 @@
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="/tai-khoan"><i class="fas fa-user-cog me-2"></i>Tài khoản</a></li>
                                 <li><a class="dropdown-item" href="/don-hang"><i class="fas fa-receipt me-2"></i>Đơn hàng của tôi</a></li>
-                                <li><a class="dropdown-item" href="/yeu-thich"><i class="fas fa-heart me-2"></i>Món ăn yêu thích</a></li>
+                                <!-- <li><a class="dropdown-item" href="/yeu-thich"><i class="fas fa-heart me-2"></i>Món ăn yêu thích</a></li> -->
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="/dang-xuat"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
                             </ul>
@@ -101,3 +110,28 @@
         </div>
     </div>
 </nav>
+<!-- <script>
+    function getCartItemCount() {
+      const cartData = localStorage.getItem('gioHang');
+      if (!cartData) return 0;
+  
+      try {
+        const cartItems = JSON.parse(cartData);
+        return cartItems.length; // đếm số món
+      } catch (e) {
+        return 0;
+      }
+    }
+  
+    // Cập nhật số lượng món hàng lên giao diện
+    document.addEventListener("DOMContentLoaded", function () {
+      const count = getCartItemCount();
+      const cartBadge = document.querySelector(".cart-count");
+      if (cartBadge) {
+        cartBadge.innerText = count;
+      }
+    });
+    
+  </script> -->
+  
+</div>

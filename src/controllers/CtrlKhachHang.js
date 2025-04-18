@@ -121,7 +121,24 @@ const CtrlKhachHang = {
             return res.json({ status: false, error: 'Lỗi server', error });
         }
     },
-
+    layThongTinKhachHang: async (req, res) => {
+        const user = res.locals.user;
+        if (!user || !user.id) {
+            return res.status(401).json({ status: false, error: 'Chưa đăng nhập hoặc token hết hạn' });
+        }
+    
+        try {
+            const khachHang = await KhachHang.findOne({
+                where: { id: user.id }
+            });
+    
+            return res.json({ status: true, khachHang });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ status: false, error: 'Lỗi server' });
+        }
+    }
+    
 }
 
 module.exports = CtrlKhachHang;
