@@ -4,22 +4,9 @@
     scripts: '<script src="/js/customer/trang-chu.js"></script>',
     body: `
         <!-- Hero Section với Video Background -->
-        <section class="hero-video-section position-relative">
-            <div class="hero-video-container">
-                <video autoplay muted loop class="hero-video">
-                    <source src="/videos/restaurant-ambience.mp4" type="video/mp4">
-                </video>
-                <div class="hero-overlay"></div>
-            </div>
-            <div class="hero-content container text-center">
-                <h1 class="display-3 fw-bold text-white mb-4" data-aos="fade-up">Nhà Hàng XYZ</h1>
-                <p class="lead text-white mb-5" data-aos="fade-up" data-aos-delay="200">Trải nghiệm ẩm thực đẳng cấp</p>
-                <div data-aos="fade-up" data-aos-delay="400">
-                    <a href="/dat-ban" class="btn btn-primary btn-lg me-3">Đặt bàn ngay</a>
-                    <a href="/thuc-don" class="btn btn-outline-light btn-lg">Xem thực đơn</a>
-                </div>
-            </div>
-        </section>
+        
+        
+        
 
         <!-- Điểm nổi bật -->
         <section class="features-section py-5">
@@ -57,7 +44,7 @@
         </section>
 
         <!-- Giới thiệu với nền parallax -->
-        <section class="intro-parallax-section py-6 position-relative">
+        <!-- <section class="intro-parallax-section py-6 position-relative">
             <div class="parallax-bg"></div>
             <div class="container position-relative">
                 <div class="row align-items-center">
@@ -79,7 +66,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <!-- Thực đơn nổi bật với tabs -->
         <section class="featured-menu py-6">
@@ -87,10 +74,10 @@
                 <div class="text-center mb-5" data-aos="fade-up">
                     <h2 class="section-title">Thực Đơn Nổi Bật</h2>
                     <div class="section-divider mx-auto my-4"></div>
-                    <p class="section-subtitle">Khám phá những món ăn đặc sắc nhất của chúng tôi</p>
+                    <p class="section-subtitle">Khám phá những món ăn được yêu thích nhất của chúng tôi</p>
                 </div>
                 
-                <ul class="nav nav-pills menu-tabs mb-5 justify-content-center" id="menuTabs" role="tablist" data-aos="fade-up">
+                <!-- <ul class="nav nav-pills menu-tabs mb-5 justify-content-center" id="menuTabs" role="tablist" data-aos="fade-up">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="khai-vi-tab" data-bs-toggle="pill" data-bs-target="#khai-vi" type="button">Khai vị</button>
                     </li>
@@ -103,33 +90,10 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="do-uong-tab" data-bs-toggle="pill" data-bs-target="#do-uong" type="button">Đồ uống</button>
                     </li>
-                </ul>
+                </ul> -->
                 
-                <div class="tab-content" id="menuTabContent">
-                    <!-- Khai vị -->
-                    <div class="tab-pane fade show active" id="khai-vi" role="tabpanel">
-                        <div class="row g-4">
-                            <div class="col-md-6 col-lg-3" data-aos="fade-up">
-                                <div class="menu-item-card">
-                                    <div class="menu-item-image">
-                                        <img src="/images/menu/appetizer-1.jpg" alt="Khai vị" class="img-fluid">
-                                        <div class="menu-item-badge">Mới</div>
-                                    </div>
-                                    <div class="menu-item-info p-3">
-                                        <h5>Salad Địa Trung Hải</h5>
-                                        <p class="text-muted">Rau xanh tươi ngon với dầu oliu</p>
-                                        <div class="d-flex justify-content-between align-items-center mt-3">
-                                            <span class="menu-item-price">85.000₫</span>
-                                            <button class="btn btn-sm btn-outline-primary">Đặt món</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Thêm các món khai vị khác tương tự -->
-                        </div>
-                    </div>
+                <div id="danhSachMonAn" class="row g-4">
                     
-                    <!-- Các tab khác tương tự -->
                 </div>
                 
                 <div class="text-center mt-5" data-aos="fade-up">
@@ -139,7 +103,7 @@
         </section>
 
         <!-- Giới thiệu đầu bếp -->
-        <section class="chef-section py-6 bg-light">
+        <!-- <section class="chef-section py-6 bg-light">
             <div class="container">
                 <div class="text-center mb-5" data-aos="fade-up">
                     <h2 class="section-title">Đầu Bếp Của Chúng Tôi</h2>
@@ -201,111 +165,9 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
-        <!-- CTA Đặt bàn với video background -->
-        <section class="reservation-video-cta position-relative py-6">
-            <div class="reservation-video-bg">
-                <video autoplay muted loop class="reservation-video">
-                    <source src="/videos/restaurant-table.mp4" type="video/mp4">
-                </video>
-                <div class="reservation-overlay"></div>
-            </div>
-            <div class="container position-relative">
-                <div class="row justify-content-end" data-aos="fade-left">
-                    <div class="col-lg-6">
-                        <div class="reservation-card bg-white p-5 rounded shadow">
-                            <h2 class="mb-4">Đặt Bàn Ngay Hôm Nay</h2>
-                            <p class="lead mb-4">Đảm bảo không gian tốt nhất cho bữa ăn của bạn</p>
-                            
-                            <form class="reservation-form">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <input type="text" class="form-control" placeholder="Họ tên">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <input type="tel" class="form-control" placeholder="Số điện thoại">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <input type="date" class="form-control">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <input type="time" class="form-control">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <select class="form-select">
-                                            <option selected>Số người</option>
-                                            <option value="1">1 người</option>
-                                            <option value="2">2 người</option>
-                                            <option value="3">3-4 người</option>
-                                            <option value="4">5-8 người</option>
-                                            <option value="5">8+ người</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <button type="submit" class="btn btn-primary w-100">Đặt bàn ngay</button>
-                                    </div>
-                                </div>
-                            </form>
-                            
-                            <div class="text-center mt-4">
-                                <p class="mb-0">Hoặc gọi: <strong>0987 654 321</strong></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Đánh giá khách hàng -->
-        <section class="testimonials-section py-6">
-            <div class="container">
-                <div class="text-center mb-5" data-aos="fade-up">
-                    <h2 class="section-title">Khách Hàng Nói Gì?</h2>
-                    <div class="section-divider mx-auto my-4"></div>
-                </div>
-                
-                <div class="testimonial-slider" data-aos="fade-up">
-                    <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <div class="row justify-content-center">
-                                    <div class="col-lg-8">
-                                        <div class="testimonial-item text-center">
-                                            <div class="testimonial-quote">
-                                                <i class="fas fa-quote-left fa-3x text-primary opacity-25"></i>
-                                            </div>
-                                            <p class="testimonial-text lead my-4">Món ăn ngon tuyệt vời, không gian sang trọng và phục vụ chuyên nghiệp. Chắc chắn tôi sẽ quay lại!</p>
-                                            <div class="testimonial-rating text-warning mb-3">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                            </div>
-                                            <div class="testimonial-author">
-                                                <img src="/images/testimonials/avatar1.jpg" alt="Khách hàng" class="rounded-circle" width="70" height="70">
-                                                <h5 class="mt-3">Nguyễn Văn A</h5>
-                                                <p class="text-muted">Khách hàng thân thiết</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Thêm các testimonial khác tương tự -->
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Trước</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Sau</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
+        
 
         <!-- Thư viện ảnh -->
         <section class="gallery-section py-6 bg-light">

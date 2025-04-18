@@ -33,7 +33,7 @@
     </main>
 
     <!-- Newsletter Signup -->
-    <%- include('../partials/customer/newsletter.html') %>
+   
 
     <!-- Footer -->
     <footer>
@@ -325,7 +325,9 @@
     <!--Socket.io-->
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <!-- Chat JS -->
-    <script type="module" src="/js/customer/chat.js"></script>
+    <script src="/js/customer/chat.js"></script>
+    <!--Cart-->
+    <script src="/js/customer/cart.js"></script>
     <!-- Custom JS cho từng trang -->
     <%- typeof scripts != 'undefined' ? scripts : '' %>
 </body>

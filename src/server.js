@@ -1,5 +1,6 @@
 require('dotenv').config();
-const express = require('express')
+const express = require('express');
+const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const socketIo = require('socket.io');
@@ -14,6 +15,8 @@ app.use(cookieParser());
 // Cấu hình Express để phục vụ file tĩnh trong thư mục 'public'
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(express.json());
+
 // Cấu hình EJS
 app.engine('html', require('ejs').renderFile); // Cho phép sử dụng file .html
 app.set('view engine', 'html');
@@ -23,6 +26,9 @@ app.use('/api', apiRouter);
 app.use('/manager', manageRouter);
 app.use('/', customerRouter); // Đường dẫn cho router khách hàng
 
+app.use((req, res, next) => {
+    res.status(404).render('404.html'); // Render trang 404 nếu không tìm thấy route
+});
 
 // Cấu hình Socket.IO
 const server = http.createServer(app);

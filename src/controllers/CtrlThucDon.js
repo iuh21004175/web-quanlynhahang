@@ -2,11 +2,18 @@ const DanhMucMonAn = require('../models/DanhMucMonAn');
 const MonAn = require('../models/MonAn');
 const ChiTietMonAn = require('../models/ChiTietMonAn');
 const NguyenLieu = require('../models/NguyenLieu');
+const ChiTietDonHang = require('../models/ChiTietDonHang')
 const {Readable} = require('stream');
 const cloudinary = require('../config/cloudinary');
+const sequelize = require('../config/database');
+
+
 module.exports = {
     indexDanhMuc: (req, res) => {
         res.render('manager/danh-muc-mon-an');
+    },
+    indexThucDonKhachHang: (req, res) => {
+        res.render('customer/thuc-don');
     },
     indexMonAn: (req, res) => {
         res.render('manager/mon-an');
@@ -64,6 +71,46 @@ module.exports = {
             return res.json({ status: false, error: 'Lỗi server' });
         }
     },
+    layMonAnTheoLoai: async (req, res) => {
+        try {
+            const { id } = req.params; // Lấy id từ URL
+            const whereClause = id ? { idDanhMuc: id } : {}; // Nếu có id thì tìm món ăn theo idDanhMuc, nếu không có id thì lấy tất cả
+            const monAn = await MonAn.findAll({
+                where: whereClause,
+                order: [['id', 'DESC']],
+                include: {
+                    model: DanhMucMonAn,
+                    attributes: ['tenDanhMuc']
+                }
+            });
+            return res.json({ status: true, list: monAn });
+        } catch (error) {
+            console.error('Error:', error);
+            return res.json({ status: false, error: 'Lỗi server' });
+        }
+    },      
+
+    layMonAnBanChay: async (req, res) => {
+        try {
+            const chiTietDonHang = await ChiTietDonHang.findAll({
+                attributes: [
+                    'idMonAn',  // Nhóm theo id món ăn
+                    [sequelize.fn('SUM', sequelize.col('so_luong')), 'totalQuantity']  // Tính tổng số lượng món ăn
+                ],
+                group: ['idMonAn'],  // Nhóm theo id món ăn
+                include: {
+                    model: MonAn,
+                    attributes: ['ten','gia','moTa','hinhAnh'],  // Lấy các thuộc tính của món ăn)']
+                },
+                order: [['totalQuantity', 'DESC']],  // Sắp xếp theo tổng số lượng
+                limit: 3  // Lấy ra 3 món ăn có số lượng lớn nhất
+            });
+            return res.json({ status: true, list: chiTietDonHang });
+        } catch (error) {
+            console.error('Error:', error);
+            return res.json({ status: false, error: 'Lỗi server' });
+        }   
+    },   
     themMonAn: async (req, res) => {
         const { ten, gia, moTa, idDanhMuc, NguyenLieu } = req.body;
         try{

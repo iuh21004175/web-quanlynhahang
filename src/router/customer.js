@@ -3,10 +3,15 @@ const multer = require('multer');
 const router = express.Router();
 const CtrlTrangChu = require('../controllers/CtrlTrangChu');
 const CtrlKhachHang = require('../controllers/CtrlKhachHang');
+const CtrlThucDon = require('../controllers/CtrlThucDon');
+const CtrlDonHang = require('../controllers/CtrlDonHang');
+const sepayController = require('../controllers/sepay.controller');
+
+router.post('/sepay/webhook', sepayController.handleWebhook);
 const jwt = require('jsonwebtoken');
 
 router.use((req, res, next) => {
-    const excludedRoutes = ['/'];
+    const excludedRoutes = ['/', '/thuc-don', '/gioi-thieu'];
     if (excludedRoutes.includes(req.path)) {
         // Nếu là / thì kiểm tra xem có cookie không
         const token = req.cookies.AuthTokenCustomer;
@@ -36,7 +41,18 @@ router.use((req, res, next) => {
         CtrlKhachHang.kiemTraTruyCap(req, res, next);
     }
 });
+
+
+
+
 router.get('/', CtrlTrangChu.index)
 router.get('/dang-xuat', CtrlKhachHang.dangXuat);
+router.get('/thuc-don', CtrlThucDon.indexThucDonKhachHang);
+router.get('/gioi-thieu', CtrlTrangChu.indexGioiThieu);
+router.get('/don-hang', CtrlTrangChu.indexDonHang);
+router.get('/thanh-toan', CtrlTrangChu.indexThanhToan);
+router.get('/thanh-toan-online', CtrlTrangChu.indexThanhToanOnline);
+router.post('/them-don-hang', CtrlDonHang.themDonHang);
+router.get('/don-hang/thanh-toan-thanh-cong/:id', CtrlDonHang.getSuccessOrders);
 
 module.exports = router;
