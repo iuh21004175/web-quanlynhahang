@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', async function () {
+    
     let thongTinKhachHang = await getAPIThongTinKhachHang();
     thaoTacThongTinKhachHang(thongTinKhachHang);
 
@@ -166,6 +167,7 @@ function thaoTacThongTinKhachHang(khachHang) {
                         <div class="col-12">
                             <label class="form-label">Địa chỉ *</label>
                             <input type="text" class="form-control" id="address"  value="${khachHang?.diaChi || ''}" required>
+                           
                             <div class="invalid-feedback">
                                 Vui lòng nhập địa chỉ
                             </div>
@@ -219,3 +221,5 @@ async function getAPIThongTinKhachHang() {
         return {};
     }
 }
+
+

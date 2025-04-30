@@ -9,7 +9,7 @@ module.exports = {
     },
     dangNhap: async (req, res) => {
         try {
-            const { tenDangNhap, matKhau } = req.body;
+            const { tenDangNhap, matKhau, idNhanVien } = req.body;
             const taiKhoan = await TaiKhoan.findOne({
                 where: {
                     tenDangNhap: tenDangNhap,
@@ -30,7 +30,8 @@ module.exports = {
                 const payload = {
                     tenDangNhap: taiKhoan.tenDangNhap,
                     matKhau: taiKhoan.matKhau,
-                    vaiTro: vaiTro
+                    vaiTro: vaiTro,
+                    idNhanVien: taiKhoan.idNhanVien
                 };
                 // Tạo JWT không có thời hạn
                 const token = jwt.sign(payload, process.env.JWT_SECRET, {
@@ -65,6 +66,7 @@ module.exports = {
                     return res.redirect('/manager/login');
                 }
                 const token = jwt.sign({
+                    idNhanVien: decoded.idNhanVien,
                     tenDangNhap: decoded.tenDangNhap,
                     matKhau: decoded.matKhau,
                     vaiTro: decoded.vaiTro
