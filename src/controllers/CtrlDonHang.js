@@ -1,6 +1,7 @@
 const DonHang = require('../models/DonHang');
 const ChiTietDonHang = require('../models/ChiTietDonHang');
 const MonAn = require('../models/MonAn');
+const TaiKhoan = require('../models/TaiKhoan');
 const moment = require('moment-timezone');
 
 module.exports = {
@@ -16,7 +17,9 @@ module.exports = {
         }
         
     },
-
+    indexGhiDonHang:  (req, res) => {
+        res.render('manager/ghi-don-hang');
+    },
     themDonHang: async (req, res) => {
         const user = res.locals.user;
         if (!user || !user.id) {
@@ -73,6 +76,109 @@ module.exports = {
             res.status(500).json({ status: false, error: 'Lỗi server' });
         }
     },
+
+    ghiDonHang: async (req, res) => {
+        const { idDonHang, hinhThuc, thanhToan, trangThai, tongTien, chiTietDonHang } = req.body;
+        const idBan = req.query.idBan;
+    
+        const hinhThucNum = parseInt(hinhThuc);
+        const trangThaiNum = parseInt(trangThai);
+        const tongTienNum = parseFloat(tongTien);
+        const thanhToanNum = parseFloat(thanhToan);
+        console.log('Trạng thái nhận từ frontend:', trangThaiNum);
+
+        console.log('Dữ liệu nhận được từ frontend:', req.body);
+    
+        try {
+            if (!idBan) {
+                return res.status(400).json({ status: false, error: 'Thiếu ID bàn' });
+            }
+    
+            const tenDangNhap = res.locals?.taiKhoan?.tenDangNhap;
+            if (!tenDangNhap) {
+                return res.status(401).json({ status: false, error: 'Bạn chưa đăng nhập' });
+            }
+    
+            const taiKhoan = await TaiKhoan.findOne({ where: { tenDangNhap } });
+            if (!taiKhoan) {
+                return res.status(404).json({ status: false, error: 'Tài khoản không tồn tại' });
+            }
+    
+            const idNhanVien = taiKhoan.idNhanVien;
+            const thoiGianGhi = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss');
+    
+            let donHang;
+    
+            if (idDonHang) {
+                donHang = await DonHang.findByPk(idDonHang);
+                if (!donHang) {
+                    return res.status(404).json({ status: false, error: 'Không tìm thấy đơn hàng để cập nhật' });
+                }
+            
+                console.log('Trạng thái ban đầu của đơn hàng:', donHang.trangThai);  // Log trạng thái ban đầu của đơn hàng
+            
+                // Kiểm tra và cập nhật trạng thái nếu cần
+                if (trangThaiNum === 2 && donHang.trangThai === 7) { // Kiểm tra nếu trạng thái là 7 và cần thay đổi thành 2
+                    await donHang.update({
+                        hinhThuc: hinhThucNum,
+                        thanhToan: thanhToanNum,
+                        trangThai: trangThaiNum,  // Cập nhật trạng thái thành 2 (đã thanh toán)
+                        tongTien: tongTienNum
+                    });
+            
+                    console.log('Đơn hàng sau khi update:', donHang.toJSON());  // Log trạng thái sau khi update
+                } else {
+                    await donHang.update({
+                        hinhThuc: hinhThucNum,
+                        thanhToan: thanhToanNum,
+                        tongTien: tongTienNum
+                    });
+                }
+            
+                // Xóa chi tiết cũ và thêm chi tiết mới
+                await ChiTietDonHang.destroy({ where: { idDonHang } });
+            
+                for (const item of chiTietDonHang) {
+                    await ChiTietDonHang.create({
+                        idDonHang,
+                        idMonAn: item.idMonAn,
+                        soLuong: item.soLuong,
+                        gia: item.gia,
+                        ghiChu: item.ghiChu || ''
+                    });
+                }
+            
+            } else {
+                donHang = await DonHang.create({
+                    idNhanVien,
+                    idBan,
+                    thoiGianGhi,
+                    hinhThuc: hinhThucNum,
+                    thanhToan: thanhToanNum,
+                    trangThai: trangThaiNum,  // Cập nhật trang thái khi tạo đơn hàng mới
+                    tongTien: tongTienNum
+                });
+            
+                for (const item of chiTietDonHang) {
+                    await ChiTietDonHang.create({
+                        idDonHang: donHang.id,
+                        idMonAn: item.idMonAn,
+                        soLuong: item.soLuong,
+                        gia: item.gia,
+                        ghiChu: item.ghiChu || ''
+                    });
+                }
+            }
+            
+            res.json({ status: true, idDonHang: donHang.id, trangThai: donHang.trangThai });
+    
+        } catch (error) {
+            console.error('Lỗi khi ghi đơn hàng:', error);
+            res.status(500).json({ status: false, error: 'Lỗi server', chiTiet: error.message });
+        }
+    },
+    
+
     getSuccessOrders: async (req, res) => {
         const { id } = req.params;  // Lấy 'id' từ URL params
         try {
@@ -163,6 +269,45 @@ module.exports = {
         } catch (error) {
             console.error(error);
             res.status(500).json({ status: false, error: 'Lỗi server khi hủy đơn hàng' });
+        }
+    },
+    layGhiDonHang: async (req, res) => {
+        const idBan = req.query.idBan;
+    
+        if (!idBan) {
+            return res.status(400).json({ status: false, message: 'Thiếu ID bàn' });
+        }
+    
+        try {
+            const donHang = await DonHang.findOne({   
+                where: {
+                    idBan,
+                    trangThai: 7  // Tìm trạng thái "chờ thanh toán"
+                },
+                include: [
+                    {
+                        model: ChiTietDonHang,
+                        attributes: ['idDonHang', 'soLuong', 'gia'], 
+                        include: [
+                            {
+                                model: MonAn,
+                                attributes: ['id', 'ten', 'gia', 'hinhAnh']
+                            }
+                        ]
+                    }
+                ]
+            });
+    
+            if (!donHang) {
+                return res.json({ status: false, message: 'Không có đơn hàng chờ thanh toán cho bàn này' });
+            }
+    
+            const plainDonHang = donHang.toJSON();  // Chuyển dữ liệu sang JSON
+            console.log(plainDonHang);
+            return res.json({ status: true, obj: plainDonHang });
+        } catch (error) {
+            console.error('Lỗi server:', error);
+            return res.status(500).json({ status: false, error: 'Lỗi server' });
         }
     }    
     

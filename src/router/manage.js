@@ -11,6 +11,7 @@ const CtrlXepLich = require('../controllers/CtrlXepLich');
 const CtrlTrangChu = require('../controllers/CtrlTrangChuNV');
 const CtrlDonHang = require('../controllers/CtrlDonHang');
 const CtrlHoTroTrucTuyen = require('../controllers/CtrlHoTroTrucTuyen');
+const CtrlDangKyLich = require('../controllers/CtrlDangKyLich');
 
 router.use((req, res, next) => {
     const excludedRoutes = ['/login', '/logout'];
@@ -42,4 +43,9 @@ router.get('/trang-chu', CtrlTrangChu.index);
 router.get('/don-hang', CtrlDonHang.index);
 router.get('/dang-xuat', CtrlTaiKhoan.dangXuat);
 router.get('/ho-tro-truc-tuyen', CtrlHoTroTrucTuyen.index);
+router.get('/dang-ky-lich-lam-viec', CtrlDangKyLich.index);
+router.get('/xem-lich-lam-viec', CtrlDangKyLich.xemLichLamViec);
+router.get('/ghi-don-hang', CtrlDonHang.indexGhiDonHang);
+router.get('/danh-sach-ban', CtrlBan.indexBanNhanVien);
+
 module.exports = router;

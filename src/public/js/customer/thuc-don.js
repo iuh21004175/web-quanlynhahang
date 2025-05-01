@@ -4,11 +4,32 @@ document.addEventListener('DOMContentLoaded', async function () {
     thaoTacThucDon(listMonAn);  // Hiển thị món ăn 
     thaoTacLoaiMon(listLoaiMon);  // Hiển thị các loại món ăn
     updateCartBadge();  // Cập nhật số lượng giỏ hàng
+    // Xử lý tìm kiếm món ăn
+    document.querySelector('#formTimKiem').addEventListener('submit', async function (e) {
+    e.preventDefault();  // Ngăn reload
+    const tuKhoa = document.querySelector('#tuKhoa').value.trim().toLowerCase();
+
+    if (!tuKhoa) return;
+
+    // Gọi API tất cả món ăn
+    const listMonAn = await getAPIMonAn();
+
+    // Lọc theo từ khóa tên món
+    const ketQua = listMonAn.filter(mon => mon.ten.toLowerCase().includes(tuKhoa));
+
+    // Hiển thị lại danh sách
+    thaoTacThucDon(ketQua);
+});
+
 });
 
 function thaoTacThucDon(list) {
     const danhSachMonAn = document.querySelector('#danhSachMonAn');
     danhSachMonAn.innerHTML = '';
+    if (list.length === 0) {
+        danhSachMonAn.innerHTML = `<div class="col-12 text-center text-muted py-5">Không tìm thấy món ăn nào phù hợp.</div>`;
+        return;
+    }
     list.forEach(function(monAn) {
         const card = `
         <div class="col-md-6 col-lg-4">
@@ -38,6 +59,8 @@ function thaoTacThucDon(list) {
 
         // Gán vào DOM
         danhSachMonAn.innerHTML += card;
+        
+        
     });
 
 

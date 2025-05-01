@@ -12,6 +12,36 @@ const apiRouter = require('./router/api');
 const chatService = require('./services/chat');
 app.use(cookieParser());
 
+app.get("/api/suggestions", async (req, res) => {
+    const { province, district, ward_street, address } = req.query;
+  
+    const query = new URLSearchParams({
+      province,
+      district,
+      ward_street,
+      address: address || "",
+    });
+  
+    try {
+      const response = await fetch(
+        `https://services.giaohangtietkiem.vn/services/address/getAddressLevel4?${query}`,
+        {
+          headers: {
+            Token: "APITokenSample-ca441e70288cB0515F310742", // thay token thật tại đây
+            "X-Client-Source": "PARTNER_CODE", // thay partner code thật nếu cần
+          },
+        }
+      );
+  
+      const data = await response.json();
+      res.json(data);
+    } catch (err) {
+      console.error("Error fetching address suggestions:", err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  });
+
+
 // Cấu hình Express để phục vụ file tĩnh trong thư mục 'public'
 app.use(express.static(path.join(__dirname, 'public')));
 

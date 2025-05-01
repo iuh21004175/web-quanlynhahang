@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', async function () {
     let listMonAn = await getAPIMonAn();  // Lấy tất cả món ăn 
     thaoTacThucDon(listMonAn);  // Hiển thị món ăn 
+    updateCartBadge(); // Cập nhật số lượng giỏ hàng
+    
 });
 
 function thaoTacThucDon(list) {

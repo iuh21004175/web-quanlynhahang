@@ -9,6 +9,7 @@ const CtrlKhachHang = require('../controllers/CtrlKhachHang');
 const CtrlDonHang = require('../controllers/CtrlDonHang');
 const CtrlBan = require('../controllers/CtrlBan');
 const CtrlHoTroTrucTuyen = require('../controllers/CtrlHoTroTrucTuyen');
+const CtrlDangKyLich = require('../controllers/CtrlDangKyLich');
 
 // Cấu hình lưu file vào bộ nhớ (RAM)
 const upload = multer({ storage: multer.memoryStorage() });
@@ -49,6 +50,7 @@ router.post('/phieu-xuat', CtrlKho.themPhieuXuat);
 router.get('/khu-vuc', CtrlBan.layKhuVuc)
 router.post('/khu-vuc', CtrlBan.themKhuVuc);
 router.put('/khu-vuc', CtrlBan.suaKhuVuc);
+router.get('/ban', CtrlBan.layBan)
 router.post('/dang-ky', CtrlKhachHang.dangKy);
 router.post('/dang-nhap-khach-hang', CtrlKhachHang.dangNhap);
 router.post('/kiem-tra-so-dien-thoai', CtrlKhachHang.kiemTraSoDienThoai);
@@ -58,4 +60,12 @@ router.get('/tin-nhan', CtrlHoTroTrucTuyen.layTinNhan);
 router.get('/lay-thong-tin-khach-hang', CtrlKhachHang.kiemTraTruyCap, CtrlKhachHang.layThongTinKhachHang);
 router.get('/lay-don-hang', CtrlKhachHang.kiemTraTruyCap, CtrlDonHang.layDonHang);
 router.put('/huy-don-hang/:id', CtrlDonHang.huyDonHang);
+router.post('/ghi-don-hang',CtrlTaiKhoan.kiemTraTruyCap, CtrlDonHang.ghiDonHang);
+router.post('/them-lich-lam-viec',CtrlTaiKhoan.kiemTraTruyCap, CtrlDangKyLich.dangKyLich);
+router.get('/lich-lam-viec',CtrlTaiKhoan.kiemTraTruyCap, CtrlDangKyLich.indexXemLich);
+router.get('/xem-lich',CtrlTaiKhoan.kiemTraTruyCap, CtrlDangKyLich.layLich);
+router.put('/cap-nhat-trang-thai-ban', CtrlBan.updateTrangThaiBan);
+router.get('/don-hang-theo-ban', CtrlDonHang.layGhiDonHang);
+
+
 module.exports = router;

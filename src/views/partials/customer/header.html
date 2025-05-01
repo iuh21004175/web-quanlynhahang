@@ -47,19 +47,33 @@
                 <li class="nav-item">
                     <a class="nav-link <%= typeof isAbout != 'undefined' && isAbout ? 'active' : '' %>" href="/gioi-thieu">Giới thiệu</a>
                 </li>
-                <!-- <li class="nav-item">
-                    <a class="nav-link <%= typeof isContact != 'undefined' && isContact ? 'active' : '' %>" href="/lien-he">Liên hệ</a>
-                </li> -->
+                <li class="nav-item">
+                    <a class="nav-link <%= typeof isContact != 'undefined' && isContact ? 'active' : '' %>" href="/tim-kiem">Liên hệ</a>
+                </li>
             </ul>
             
             <div class="d-flex align-items-center">
-                <div class="search-box me-3 d-none d-lg-block">
+                <% if (typeof isMenu !== 'undefined' && isMenu) { %>
+                    <div class="search-box me-3 d-none d-lg-block">
+                        <form id="formTimKiem" class="d-flex" method="GET">
+                            <input type="text" id="tuKhoa" name="q" class="form-control me-2" placeholder="Tìm món ăn...">
+                            <button type="submit" class="btn btn-outline-success"><i class="fas fa-search"></i></button>
+                        </form>
+                    </div>
+                <% } %>
+                
+                <!-- <div class="search-box me-3 d-none d-lg-block">
+                    <form id="formTimKiem" class="d-flex" method="GET">
+                        <input type="text" id="tuKhoa" name="q" class="form-control me-2" placeholder="Tìm món ăn...">
+                        <button type="submit" class="btn btn-outline-success"><i class="fas fa-search"></i></button>
+                    </form>
+                    
                     <form action="/tim-kiem" method="GET" class="d-flex">
                         <input type="text" name="q" class="form-control me-2" placeholder="Tìm món ăn...">
                         <button type="submit" class="btn btn-outline-success"><i class="fas fa-search"></i></button>
                     </form>
                 </div>
-                
+                 -->
                 <div class="user-actions d-flex align-items-center">
                     
                     <!-- Kiểm tra người dùng đã đăng nhập chưa -->
